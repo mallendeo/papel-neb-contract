@@ -1,0 +1,11 @@
+{
+  "extends": "standard",
+  "globals": {
+    "BigNumber": false,
+    "LocalContractStorage": false,
+    "Blockchain": false,
+    "TESTNET_OWNER": false,
+    "MAINNET_OWNER": false,
+    "USE_MAINNET": false
+  }
+}
