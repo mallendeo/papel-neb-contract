@@ -19,6 +19,6 @@ describe('Admin', () => {
 
   it('Should have the admin address set', () => {
     expect(db.get('prop_admin').value()).to.be.equal('"NB_ADDRESS_ADMIN"')
-    expect(contract.store.admin).to.be.equal('NB_ADDRESS_ADMIN')
+    expect(contract.admin.store.admin).to.be.equal('NB_ADDRESS_ADMIN')
   })
 })

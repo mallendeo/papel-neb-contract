@@ -1,28 +1,23 @@
-import UsersController from './controllers/users'
+import AdminController from './controllers/admin'
 import SheetsController from './controllers/sheets'
+import UsersController from './controllers/users'
 
-import { initStorage } from './lib/helpers'
-
-class PapelApp {
+export default class PapelApp {
   constructor () {
-    this.store = initStorage(this)([
-      { name: 'admin' }
-    ])
-
-    this.users = UsersController(this)
+    this.admin = AdminController(this)
     this.sheets = SheetsController(this)
+    this.users = UsersController(this)
   }
 
   init () {
-    this.store.admin = Blockchain.transaction.from
-
-    this.users.init()
+    this.admin.init()
     this.sheets.init()
+    this.users.init()
   }
 
-  // --------------
-  // Users
-  // --------------
+  // 👥 Users
+  // ----------------------------
+
   setUsername (from, username, oldUsername) {
     return this.users.setUsername(from, username, oldUsername)
   }
@@ -35,26 +30,17 @@ class PapelApp {
     return this.users.getUser(username)
   }
 
-  // --------------
-  // Sheets
-  // --------------
+  // 📝 Sheets
+  // ----------------------------
 
   saveSheet (key, opts) {
     return this.sheets.saveSheet(key, opts)
   }
 
+  // 🔐 Admin
+  // ----------------------------
+
   withdraw (balance) {
-    const { from } = Blockchain.transaction
-    if (this.store.admin !== from) {
-      throw new Error(`You're not the owner.`)
-    }
-
-    const result = Blockchain.transfer(from, new BigNumber(balance * 10 ** 18))
-
-    if (!result) {
-      throw new Error('Transfer failed.')
-    }
+    return this.admin.withdraw(balance)
   }
 }
-
-export default PapelApp
