@@ -14,13 +14,13 @@ export default app => {
     const { from } = Blockchain.transaction
 
     if (store.admin !== from) {
-      throw new UnauthorizedError(`You're not the owner.`)
+      throw UnauthorizedError(`You're not the owner.`)
     }
 
     const result = Blockchain.transfer(from, new BigNumber(balance * 10 ** 18))
 
     if (!result) {
-      throw new AppError('Transfer failed.')
+      throw AppError('Transfer failed.')
     }
   }
 

@@ -1,40 +1,32 @@
-export class AppError extends Error {
-  constructor (message, status) {
-    super(message)
-    this.name = this.constructor.name
-    Error.captureStackTrace(this, this.constructor)
-    this.status = status || 500
-  }
+export const AppError = (name, message, status = 500) => {
+  const err = Error(message)
+  err.name = name
+  err.status = status
+
+  return err
 }
 
-export class NotFoundError extends AppError {
-  constructor (message) {
-    super(message || 'Not found', 404)
-  }
+const ERROR_TYPES = {
+  NotFoundError: 'NotFoundError',
+  MissingParameterError: 'MissingParameterError',
+  ForbiddenError: 'ForbiddenError',
+  ConflictError: 'ConflictError',
+  UnauthorizedError: 'UnauthorizedError'
 }
 
-export class MissingParameterError extends AppError {
-  constructor (param) {
-    super(`Missing parameter ${param}`, 400)
-  }
-}
+export const NotFoundError = (message = 'Not found') =>
+  AppError(ERROR_TYPES.NotFoundError, message, 404)
 
-export class ForbiddenError extends AppError {
-  constructor (message) {
-    super(message || `You're not allowed to do that`, 403)
-  }
-}
+export const MissingParameterError = param =>
+  AppError(ERROR_TYPES.MissingParameterError, `Missing parameter ${param}`, 400)
 
-export class ConflictError extends AppError {
-  constructor (message) {
-    super(message, 409)
-  }
-}
+export const ForbiddenError = (message = `You're not allowed to do that`) =>
+  AppError(ERROR_TYPES.ForbiddenError, message, 403)
 
-export class UnauthorizedError extends AppError {
-  constructor (message) {
-    super(message || `You're not allowed to do that`, 401)
-  }
-}
+export const ConflictError = message =>
+  AppError(ERROR_TYPES.ConflictError, message, 409)
+
+export const UnauthorizedError = (message = `You're not allowed to do that`) =>
+  AppError(ERROR_TYPES.UnauthorizedError, message, 401)
 
 export default AppError
