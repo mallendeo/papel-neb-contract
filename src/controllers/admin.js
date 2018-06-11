@@ -1,4 +1,5 @@
 import { initStorage } from '../lib/helpers'
+import { AppError, UnauthorizedError } from '../lib/errors'
 
 export default app => {
   const store = initStorage(app)({
@@ -13,13 +14,13 @@ export default app => {
     const { from } = Blockchain.transaction
 
     if (store.admin !== from) {
-      throw new Error(`You're not the owner.`)
+      throw new UnauthorizedError(`You're not the owner.`)
     }
 
     const result = Blockchain.transfer(from, new BigNumber(balance * 10 ** 18))
 
     if (!result) {
-      throw new Error('Transfer failed.')
+      throw new AppError('Transfer failed.')
     }
   }
 

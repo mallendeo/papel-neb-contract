@@ -72,7 +72,11 @@ describe('Users', () => {
   })
 
   it('Should\'t let the user change its creation date', () => {
-    expect(() => contract.saveUser({ username: 'testuser2018', created: Date.now() }))
-      .to.throw('Not allowed')
+    expect(() => {
+      contract.saveUser({
+        username: 'testuser2018',
+        created: Date.now()
+      })
+    }).to.throw(/not allowed/)
   })
 })

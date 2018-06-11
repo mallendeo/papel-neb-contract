@@ -1,4 +1,9 @@
 import Sheet from '../models/sheet'
+import {
+  ForbiddenError,
+  MissingParameterError
+} from '../lib/errors'
+
 import { initStorage } from '../lib/helpers'
 
 export default app => {
@@ -18,13 +23,13 @@ export default app => {
   }
 
   const saveSheet = (key, opts) => {
-    if (!opts) throw Error('Missing parameter opts')
+    if (!opts) throw new MissingParameterError('opts')
     const { from } = Blockchain.transaction
 
     const exists = store.sheets.get(key)
 
     if (exists && exists.author !== from) {
-      throw Error(`You can't edit a sheet that isn't yours`)
+      throw new ForbiddenError(`You can't edit a sheet that isn't yours`)
     }
 
     if (!exists) {
@@ -34,7 +39,7 @@ export default app => {
 
     const slugSheetKey = store.sheetSlugMap.get(opts.slug)
     if (slugSheetKey && slugSheetKey !== key) {
-      throw Error('This slug is already taken')
+      throw new ForbiddenError('This slug is already taken')
     }
 
     store.sheetSlugMap.put(opts.slug, key)

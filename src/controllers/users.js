@@ -1,5 +1,11 @@
 import User from '../models/user'
 import { initStorage } from '../lib/helpers'
+import {
+  ForbiddenError,
+  MissingParameterError,
+  NotFoundError,
+  ConflictError
+} from '../lib/errors'
 
 export default app => {
   const store = initStorage(app)({
@@ -19,19 +25,19 @@ export default app => {
 
   const setUsername = (from, username, oldUsername) => {
     const addrOwner = store.usernameMap.get(username)
-    if (addrOwner) throw Error(`Username ${username} is taken`)
+    if (addrOwner) throw new ConflictError(`Username ${username} is taken`)
     if (oldUsername) store.usernameMap.del(oldUsername)
     store.usernameMap.put(username, from)
   }
 
   const saveUser = user => {
     const { username } = user
-    if (!username) throw Error('Missing parameter "username"')
+    if (!username) throw new MissingParameterError('username')
 
     const { from } = Blockchain.transaction
     const found = store.users.get(from)
 
-    if (user.created) throw Error('Not allowed')
+    if (user.created) throw new ForbiddenError()
 
     if (found && username !== found.username) {
       setUsername(from, username, found.username)
@@ -50,7 +56,9 @@ export default app => {
 
   const getUser = username => {
     const userId = store.usernameMap.get(username)
-    return store.users.get(userId)
+    const user = store.users.get(userId)
+    if (!user) throw new NotFoundError(`Couldn't find user ${username}`)
+    return user
   }
 
   return {
