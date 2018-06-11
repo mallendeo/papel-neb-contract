@@ -17,6 +17,7 @@ export default class PapelApp {
     // 📝 Sheets
     // ----------------------------
     this.saveSheet = this.sheets.saveSheet
+    this.getSheet = this.sheets.getSheet
 
     // 🔐 Admin
     // ----------------------------

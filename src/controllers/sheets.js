@@ -1,7 +1,11 @@
+import merge from 'deepmerge'
 import Sheet from '../models/sheet'
+
 import {
   ForbiddenError,
-  MissingParameterError
+  UnauthorizedError,
+  MissingParameterError,
+  NotFoundError
 } from '../lib/errors'
 
 import { initStorage } from '../lib/helpers'
@@ -22,36 +26,64 @@ export default app => {
     store.sheetMapSize = 0
   }
 
-  const saveSheet = (key, opts) => {
+  const _update = (hash, opts, init) => {
+    if (opts.created) throw ForbiddenError()
+
+    const author = Blockchain.transaction.from
+    const initObj = init ? { created: Date.now() } : {}
+    const sheet = store.sheets.get(hash) || {}
+    const update = { updated: Date.now(), author }
+
+    const obj = merge.all([sheet, opts, update, initObj])
+    return store.sheets.put(hash, obj)
+  }
+
+  const saveSheet = (slug, opts) => {
+    if (!slug) throw MissingParameterError('slug')
     if (!opts) throw MissingParameterError('opts')
-    const { from } = Blockchain.transaction
 
-    const exists = store.sheets.get(key)
+    const { from, hash } = Blockchain.transaction
 
-    if (exists && exists.author !== from) {
-      throw ForbiddenError(`You can't edit a sheet that isn't yours`)
-    }
-
-    if (!exists) {
-      store.sheetIndexMap.put(store.sheetMapSize, key)
+    let sheetHash = store.sheetSlugMap.get(slug)
+    if (!sheetHash) {
+      sheetHash = hash
+      store.sheetSlugMap.put(slug, hash)
+      store.sheetIndexMap.put(store.sheetMapSize, hash)
       store.sheetMapSize += 1
+
+      return _update(hash, opts, true)
     }
 
-    const slugSheetKey = store.sheetSlugMap.get(opts.slug)
-    if (slugSheetKey && slugSheetKey !== key) {
+    const current = store.sheets.get(sheetHash)
+
+    if (current.author !== from) {
+      throw UnauthorizedError(`You can't edit a sheet that isn't yours`)
+    }
+
+    const slugSheetHash = store.sheetSlugMap.get(slug)
+    if (slugSheetHash && slugSheetHash !== sheetHash) {
       throw ForbiddenError('This slug is already taken')
     }
 
-    store.sheetSlugMap.put(opts.slug, key)
+    store.sheetSlugMap.put(slug, sheetHash)
 
-    const saved = store.sheets.put(key, Object.assign(opts, { author: from }))
+    return _update(sheetHash, opts)
+  }
 
-    return { saved }
+  const getSheet = slug => {
+    const hash = store.sheetSlugMap.get(slug)
+    if (!hash) throw NotFoundError()
+
+    const sheet = store.sheets.get(hash)
+    if (sheet.isRemoved) throw NotFoundError()
+
+    return sheet
   }
 
   return {
     init,
     store,
-    saveSheet
+    saveSheet,
+    getSheet
   }
 }

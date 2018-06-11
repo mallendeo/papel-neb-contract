@@ -2,24 +2,14 @@ import { expect } from 'chai'
 
 import '../extensions'
 import db from '../extensions/db'
-
-export const clearDb = () => db.setState({}).write()
+import { ADDR_USER_1, ADDR_USER_2 } from './config'
 
 let contract = null
 
-const NB_ADDR = 'NB_ADDRESS'
-const ADDR_USER_1 = `${NB_ADDR}_mallendeo`
-const ADDR_USER_2 = `${NB_ADDR}_testuser`
-// const ADDR_USER_3 = `${NB_ADDR}_bot`
-
 describe('Users', () => {
   before(() => {
-    clearDb()
-
     Blockchain.transaction.from = ADDR_USER_1
-
     contract = new Contract()
-    contract.init()
   })
 
   it('Should init and set props', () => {
