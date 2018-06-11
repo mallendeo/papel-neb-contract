@@ -10,9 +10,16 @@ $ yarn
 
 ## Build
 
-```
+```bash
 $ yarn build:dev
 $ yarn build # Production
 ```
 
 Compiled file will be on the `dist/` directory.
+
+## Test
+```bash
+$ yarn test
+$ yarn test:watch
+$ yarn test:db # save db on ./tmp
+```
