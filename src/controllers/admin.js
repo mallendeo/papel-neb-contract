@@ -1,9 +1,9 @@
 import { initStorage } from '../lib/helpers'
 
 export default app => {
-  const store = initStorage(app)([
-    { name: 'admin' }
-  ])
+  const store = initStorage(app)({
+    admin: null
+  })
 
   const init = () => {
     store.admin = Blockchain.transaction.from

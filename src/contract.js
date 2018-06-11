@@ -7,40 +7,25 @@ export default class PapelApp {
     this.admin = AdminController(this)
     this.sheets = SheetsController(this)
     this.users = UsersController(this)
+
+    // 👥 Users
+    // ----------------------------
+    this.setUsername = this.users.setUsername
+    this.saveUser = this.users.saveUser
+    this.getUser = this.users.getUser
+
+    // 📝 Sheets
+    // ----------------------------
+    this.saveSheet = this.sheets.saveSheet
+
+    // 🔐 Admin
+    // ----------------------------
+    this.withdraw = this.admin.withdraw
   }
 
   init () {
     this.admin.init()
     this.sheets.init()
     this.users.init()
-  }
-
-  // 👥 Users
-  // ----------------------------
-
-  setUsername (from, username, oldUsername) {
-    return this.users.setUsername(from, username, oldUsername)
-  }
-
-  saveUser (user) {
-    return this.users.saveUser(user)
-  }
-
-  getUser (username) {
-    return this.users.getUser(username)
-  }
-
-  // 📝 Sheets
-  // ----------------------------
-
-  saveSheet (key, opts) {
-    return this.sheets.saveSheet(key, opts)
-  }
-
-  // 🔐 Admin
-  // ----------------------------
-
-  withdraw (balance) {
-    return this.admin.withdraw(balance)
   }
 }

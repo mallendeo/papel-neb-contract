@@ -2,19 +2,16 @@ import Sheet from '../models/sheet'
 import { initStorage } from '../lib/helpers'
 
 export default app => {
-  const store = initStorage(app)([
-    { name: 'sheetSlugMap', map: true },
-    { name: 'sheetIndexMap', map: true },
-    { name: 'sheetMapSize' },
-    {
-      name: 'sheets',
+  const store = initStorage(app)({
+    sheetSlugMap: { map: true },
+    sheetIndexMap: { map: true },
+    sheetMapSize: null,
+    sheets: {
       map: true,
-      opts: {
-        parse: text => new Sheet(text),
-        stringify: o => JSON.stringify(o)
-      }
+      parse: text => new Sheet(text),
+      stringify: o => JSON.stringify(o)
     }
-  ])
+  })
 
   const init = () => {
     store.sheetMapSize = 0

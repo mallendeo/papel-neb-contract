@@ -2,19 +2,16 @@ import User from '../models/user'
 import { initStorage } from '../lib/helpers'
 
 export default app => {
-  const store = initStorage(app)([
-    { name: 'usernameMap', map: true },
-    { name: 'userIndexMap', map: true },
-    { name: 'userMapSize' },
-    {
-      name: 'users',
+  const store = initStorage(app)({
+    usernameMap: { map: true },
+    userIndexMap: { map: true },
+    userMapSize: null,
+    users: {
       map: true,
-      opts: {
-        parse: text => new User(text),
-        stringify: o => JSON.stringify(o)
-      }
+      parse: text => new User(text),
+      stringify: o => JSON.stringify(o)
     }
-  ])
+  })
 
   const init = () => {
     store.userMapSize = 0
