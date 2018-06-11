@@ -1,14 +1,6 @@
 // https://github.com/HermantNET/nebulas-contract-mimic/blob/master/src/extensions/storage.js
 // Unmodified source code: https://github.com/nebulasio/go-nebulas/blob/master/nf/nvm/v8/lib/storage.js
-import low from 'lowdb'
-import FileSync from 'lowdb/adapters/FileSync'
-import path from 'path'
-import fs from 'fs-extra'
-
-fs.ensureDirSync('tmp')
-
-const adapter = new FileSync(path.join(__dirname, '../tmp/db.json'))
-const db = low(adapter)
+import db from './db'
 
 class NativeStorage {
   constructor () {
@@ -23,8 +15,7 @@ class NativeStorage {
     return this.db.get(key).value()
   }
   set (key, val) {
-    this.db.set(key, val).write()
-    return { [key]: val }
+    return this.db.set(key, val).write()
   }
   del (key) {
     return this.db.unset(key).write()
