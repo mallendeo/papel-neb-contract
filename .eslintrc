@@ -1,9 +1,18 @@
 {
   "extends": "standard",
+  "env": {
+    "mocha": true
+  },
+  "plugins": ["chai-friendly"],
+  "rules": {
+    "no-unused-expressions": 0,
+    "chai-friendly/no-unused-expressions": 2
+  },
   "globals": {
     "BigNumber": false,
     "LocalContractStorage": false,
     "Blockchain": false,
+    "Contract": false,
     "Event": false,
     "TESTNET_OWNER": false,
     "MAINNET_OWNER": false,
