@@ -1,22 +1,18 @@
 export const makeKey = (pre = 'prop') => name => `${pre}_${name}`
 
 // Clone object including setters and getters
-export function assign (target) {
-  for (var
-    hOP = Object.prototype.hasOwnProperty,
-    copy = function (key) {
-      if (!hOP.call(target, key)) {
-        Object.defineProperty(
-          target,
-          key,
-          Object.getOwnPropertyDescriptor(this, key)
-        )
-      }
-    },
-    i = arguments.length;
-    i-- > 1;
-    Object.keys(arguments[i]).forEach(copy, arguments[i])
-  ) {}
+export const assign = (target, ...args) => {
+  const copy = (key, obj) => {
+    if (!Object.prototype.hasOwnProperty.call(target, key)) {
+      const desc = Object.getOwnPropertyDescriptor(obj, key)
+      Object.defineProperty(target, key, desc)
+    }
+  }
+
+  args.forEach(obj =>
+    Object.keys(obj).forEach(key => copy(key, obj))
+  )
+
   return target
 }
 
