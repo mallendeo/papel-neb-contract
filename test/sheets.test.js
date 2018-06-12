@@ -110,17 +110,26 @@ describe('Sheets', () => {
 
   it('Should save compiled code', () => {
     Blockchain.transaction.hash = makeHash()
-
     Blockchain.transaction.from = ADDR_USER_3
-    const newSheet = contract.saveSheet(null, { // Random generated slug
+
+    contract.saveSheet('vueApp', { // Random generated slug
       isPublic: true,
       src: DEMO_SHEET.src,
       compiled: DEMO_SHEET.compiled
     })
 
-    const saved = contract.getSheet(newSheet.slug)
+    const saved = contract.getSheet('vueApp')
     expect(saved.isPublic).to.be.true
     expect(saved.src).to.deep.equal(DEMO_SHEET.src)
     expect(saved.compiled).to.deep.equal(DEMO_SHEET.compiled)
+  })
+
+  it('Should generate a slug', () => {
+    Blockchain.transaction.hash = makeHash()
+    const newSheet = contract.saveSheet(null, { src: DEMO_SHEET.src })
+    const saved = contract.getSheet(newSheet.slug)
+
+    expect(newSheet).to.haveOwnProperty('slug')
+    expect(saved.src).to.deep.equal(DEMO_SHEET.src)
   })
 })
