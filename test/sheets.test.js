@@ -3,7 +3,7 @@ import crypto from 'crypto'
 
 import '../extensions'
 import db from '../extensions/db'
-import { ADDR_USER_1, ADDR_USER_2 } from './config'
+import { ADDR_USER_1, ADDR_USER_2, ADDR_USER_3 } from './config'
 
 const makeHash = () => crypto.randomBytes(16).toString('hex')
 
@@ -59,6 +59,7 @@ describe('Sheets', () => {
     })
 
     const sheet = contract.getSheet('myDapp')
+    expect(sheet.src.html.code).to.equal('<span>test</span>')
     expect(sheet.src).to.have.property('css').not.undefined
     expect(sheet.src).to.have.property('js').not.undefined
   })
@@ -75,5 +76,29 @@ describe('Sheets', () => {
         }
       })
     }).to.throw(/can't edit/)
+  })
+
+  it('Should save compiled code', () => {
+    Blockchain.transaction.hash = makeHash()
+
+    Blockchain.transaction.from = ADDR_USER_3
+    const saved = contract.saveSheet('vue-app', {
+      isPublic: true,
+      compiled: {
+        html: {
+          code: '<div id="app"></span>'
+        },
+        js: {
+          code: `new Vue({ el: '#app' })`,
+          libs: ['https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js']
+        },
+        css: {
+          code: '#app { display: flex }',
+          libs: ['https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css']
+        }
+      }
+    })
+    console.log(saved)
+    expect()
   })
 })

@@ -48,6 +48,13 @@ describe('Users', () => {
     }).to.throw('Username mallendeo is taken')
   })
 
+  it('Should throw when trying to save a invalid username', () => {
+    Blockchain.transaction.from = ADDR_USER_2
+    expect(() => {
+      contract.saveUser({ username: 'illegal username' })
+    }).to.throw(/illegal/i)
+  })
+
   it('Should change an existing user username', () => {
     // Current user is ADDR_USER_2
     const newUsername = 'testuser2018'

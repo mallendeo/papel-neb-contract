@@ -11,7 +11,8 @@ const ERROR_TYPES = {
   MissingParameterError: 'MissingParameterError',
   ForbiddenError: 'ForbiddenError',
   ConflictError: 'ConflictError',
-  UnauthorizedError: 'UnauthorizedError'
+  UnauthorizedError: 'UnauthorizedError',
+  BadRequestError: 'BadRequestError'
 }
 
 export const NotFoundError = (message = 'Not found') =>
@@ -19,6 +20,9 @@ export const NotFoundError = (message = 'Not found') =>
 
 export const MissingParameterError = param =>
   AppError(ERROR_TYPES.MissingParameterError, `Missing parameter ${param}`, 400)
+
+export const BadRequestError = message =>
+  AppError(ERROR_TYPES.BadRequestError, message, 400)
 
 export const ForbiddenError = (message = `You're not allowed to do that`) =>
   AppError(ERROR_TYPES.ForbiddenError, message, 403)

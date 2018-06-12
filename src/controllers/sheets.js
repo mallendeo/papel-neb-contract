@@ -1,3 +1,5 @@
+import shortid from 'shortid'
+
 import merge from 'deepmerge'
 import Sheet from '../models/sheet'
 
@@ -15,6 +17,7 @@ export default app => {
     sheetSlugMap: { map: true },
     sheetIndexMap: { map: true },
     sheetMapSize: null,
+    sheetUserMap: { map: true },
     sheets: {
       map: true,
       parse: text => new Sheet(text),
@@ -39,7 +42,7 @@ export default app => {
   }
 
   const saveSheet = (slug, opts) => {
-    if (!slug) throw MissingParameterError('slug')
+    if (!slug) slug = shortid()
     if (!opts) throw MissingParameterError('opts')
 
     const { from, hash } = Blockchain.transaction
@@ -50,6 +53,10 @@ export default app => {
       store.sheetSlugMap.put(slug, hash)
       store.sheetIndexMap.put(store.sheetMapSize, hash)
       store.sheetMapSize += 1
+
+      const userSheetList = store.sheetUserMap.get(from) || []
+      userSheetList.push(hash)
+      store.sheetUserMap.put(from, userSheetList)
 
       return _update(hash, opts, true)
     }

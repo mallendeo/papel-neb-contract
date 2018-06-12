@@ -3,6 +3,7 @@ export default class User {
     const info = JSON.parse(text)
     this.username = info.username
     this.avatar = info.avatar
+    this.bio = info.bio
     this.created = new BigNumber(info.created)
   }
 }

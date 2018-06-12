@@ -38,10 +38,12 @@ export const initStorage = app => props =>
     LocalContractStorage.defineProperty(app, key, desc)
 
     Object.defineProperty(newObj, propKey, {
-      set (val) { app[key] = val },
-      get () { return app[key] },
+      set: val => { app[key] = val },
+      get: () => app[key],
       enumerable: true
     })
 
     return assign(obj, newObj)
   }, {})
+
+export const slugSafe = str => /^[a-zA-Z0-9_-]*$/.test(str)

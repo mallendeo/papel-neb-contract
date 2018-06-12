@@ -1,10 +1,11 @@
 import User from '../models/user'
-import { initStorage } from '../lib/helpers'
+import { initStorage, slugSafe } from '../lib/helpers'
 import {
   ForbiddenError,
   MissingParameterError,
   NotFoundError,
-  ConflictError
+  ConflictError,
+  BadRequestError
 } from '../lib/errors'
 
 export default app => {
@@ -24,8 +25,12 @@ export default app => {
   }
 
   const setUsername = (from, username, oldUsername) => {
-    const addrOwner = store.usernameMap.get(username)
-    if (addrOwner) throw ConflictError(`Username ${username} is taken`)
+    if (!slugSafe(username)) {
+      throw BadRequestError('Illegal characters for "username"')
+    }
+
+    const ownerAddr = store.usernameMap.get(username)
+    if (ownerAddr) throw ConflictError(`Username ${username} is taken`)
     if (oldUsername) store.usernameMap.del(oldUsername)
     store.usernameMap.put(username, from)
   }
