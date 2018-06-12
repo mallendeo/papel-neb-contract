@@ -11,8 +11,7 @@ $ yarn
 ## Build
 
 ```bash
-$ yarn build:dev
-$ yarn build # Production
+$ yarn build
 ```
 
 Compiled file will be on the `dist/` directory.

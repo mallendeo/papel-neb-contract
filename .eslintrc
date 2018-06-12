@@ -13,9 +13,6 @@
     "LocalContractStorage": false,
     "Blockchain": false,
     "Contract": false,
-    "Event": false,
-    "TESTNET_OWNER": false,
-    "MAINNET_OWNER": false,
-    "USE_MAINNET": false
+    "Event": false
   }
 }

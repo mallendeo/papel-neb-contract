@@ -5,7 +5,6 @@
   "author": "mallendeo",
   "scripts": {
     "build": "rimraf dist && rollup -c",
-    "build:dev": "USE_MAINNET=false npm run build",
     "simulate": "npx babel-node scripts/simulate",
     "mocha": "mocha --require babel-core/register test/**/*.test.js",
     "test": "NODE_ENV=test npm run mocha",
