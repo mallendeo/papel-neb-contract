@@ -1,5 +1,3 @@
-import shortid from 'shortid'
-
 import merge from 'deepmerge'
 import Sheet from '../models/sheet'
 
@@ -7,10 +5,15 @@ import {
   ForbiddenError,
   UnauthorizedError,
   MissingParameterError,
-  NotFoundError
+  NotFoundError,
+  AppError
 } from '../lib/errors'
 
-import { initStorage } from '../lib/helpers'
+import {
+  initStorage,
+  rndSlug,
+  strToCharCode
+} from '../lib/helpers'
 
 export default app => {
   const store = initStorage(app)({
@@ -29,23 +32,32 @@ export default app => {
     store.sheetMapSize = 0
   }
 
-  const _update = (hash, opts, init) => {
+  const _update = (slug, hash, opts, init) => {
     if (opts.created) throw ForbiddenError()
 
     const author = Blockchain.transaction.from
     const initObj = init ? { created: Date.now() } : {}
     const sheet = store.sheets.get(hash) || {}
-    const update = { updated: Date.now(), author }
+    const update = { updated: Date.now(), author, slug }
 
     const obj = merge.all([sheet, opts, update, initObj])
-    return store.sheets.put(hash, obj)
+    store.sheets.put(hash, obj)
+
+    return obj
   }
 
   const saveSheet = (slug, opts) => {
-    if (!slug) slug = shortid()
-    if (!opts) throw MissingParameterError('opts')
-
     const { from, hash } = Blockchain.transaction
+
+    if (!slug) {
+      slug = rndSlug(strToCharCode(from))
+
+      if (store.sheetSlugMap.get(slug)) {
+        throw AppError('There was an error, please try again')
+      }
+    }
+
+    if (!opts) throw MissingParameterError('opts')
 
     let sheetHash = store.sheetSlugMap.get(slug)
     if (!sheetHash) {
@@ -58,12 +70,10 @@ export default app => {
       userSheetList.push(hash)
       store.sheetUserMap.put(from, userSheetList)
 
-      return _update(hash, opts, true)
+      return _update(slug, hash, opts, true)
     }
 
-    const current = store.sheets.get(sheetHash)
-
-    if (current.author !== from) {
+    if (store.sheets.get(sheetHash).author !== from) {
       throw UnauthorizedError(`You can't edit a sheet that isn't yours`)
     }
 
@@ -74,7 +84,7 @@ export default app => {
 
     store.sheetSlugMap.put(slug, sheetHash)
 
-    return _update(sheetHash, opts)
+    return _update(slug, sheetHash, opts)
   }
 
   const getSheet = slug => {

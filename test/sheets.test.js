@@ -9,6 +9,36 @@ const makeHash = () => crypto.randomBytes(16).toString('hex')
 
 let contract = null
 
+const DEMO_SHEET = {
+  src: {
+    html: {
+      type: 'pug',
+      code: '#app'
+    },
+    js: {
+      code: `new Vue({ el: '#app' })`,
+      libs: ['https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js']
+    },
+    css: {
+      code: '#app \n  display flex',
+      libs: ['https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css']
+    }
+  },
+  compiled: {
+    html: {
+      code: '<div id="app"></span>'
+    },
+    js: {
+      code: `new Vue({ el: '#app' })`,
+      libs: ['https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js']
+    },
+    css: {
+      code: '#app { display: flex }',
+      libs: ['https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css']
+    }
+  }
+}
+
 describe('Sheets', () => {
   before(() => {
     Blockchain.transaction.from = ADDR_USER_1
@@ -82,23 +112,15 @@ describe('Sheets', () => {
     Blockchain.transaction.hash = makeHash()
 
     Blockchain.transaction.from = ADDR_USER_3
-    const saved = contract.saveSheet('vue-app', {
+    const newSheet = contract.saveSheet(null, { // Random generated slug
       isPublic: true,
-      compiled: {
-        html: {
-          code: '<div id="app"></span>'
-        },
-        js: {
-          code: `new Vue({ el: '#app' })`,
-          libs: ['https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js']
-        },
-        css: {
-          code: '#app { display: flex }',
-          libs: ['https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css']
-        }
-      }
+      src: DEMO_SHEET.src,
+      compiled: DEMO_SHEET.compiled
     })
-    console.log(saved)
-    expect()
+
+    const saved = contract.getSheet(newSheet.slug)
+    expect(saved.isPublic).to.be.true
+    expect(saved.src).to.deep.equal(DEMO_SHEET.src)
+    expect(saved.compiled).to.deep.equal(DEMO_SHEET.compiled)
   })
 })

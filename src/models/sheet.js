@@ -12,8 +12,8 @@ export default class Sheet {
     this.isRemoved = opts.isRemoved
 
     // Code
-    const { html, css, js, neb } = opts.src
-    this.src = { html, css, js, neb }
+    this.src = opts.src
+    this.compiled = opts.compiled
     this.editor = opts.editor || {
       updateDelay: 0,
       refreshPage: false,

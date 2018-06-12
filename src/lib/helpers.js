@@ -47,3 +47,9 @@ export const initStorage = app => props =>
   }, {})
 
 export const slugSafe = str => /^[a-zA-Z0-9_-]*$/.test(str)
+
+export const strToCharCode = str => [...str].reduce((n, l) => n + l.charCodeAt(0), 0)
+
+export const rndSlug = (seed = 0) => Math.floor(
+  Math.random() * Date.now() + seed
+).toString(36)
