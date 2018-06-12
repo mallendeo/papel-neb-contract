@@ -6,13 +6,15 @@ import {
   UnauthorizedError,
   MissingParameterError,
   NotFoundError,
-  AppError
+  AppError,
+  BadRequestError
 } from '../lib/errors'
 
 import {
   initStorage,
   rndSlug,
-  strToCharCode
+  strToCharCode,
+  slugSafe
 } from '../lib/helpers'
 
 export default app => {
@@ -56,6 +58,8 @@ export default app => {
         throw AppError('There was an error, please try again')
       }
     }
+
+    if (!slugSafe(slug)) throw BadRequestError(`Wrong 'slug' format`)
 
     if (!opts) throw MissingParameterError('opts')
 

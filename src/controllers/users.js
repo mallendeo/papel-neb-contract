@@ -26,7 +26,7 @@ export default app => {
 
   const setUsername = (from, username, oldUsername) => {
     if (!slugSafe(username)) {
-      throw BadRequestError('Illegal characters for "username"')
+      throw BadRequestError('Invalid characters for "username"')
     }
 
     const ownerAddr = store.usernameMap.get(username)

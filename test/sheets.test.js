@@ -131,4 +131,13 @@ describe('Sheets', () => {
     expect(newSheet).to.haveOwnProperty('slug')
     expect(saved.src).to.deep.equal(DEMO_SHEET.src)
   })
+
+  it('Should throw when saving a invalid slug', () => {
+    ['invalid slug', '$invalid', 'inválid slúg'].forEach(invalid => {
+      newTxHash()
+      expect(() => {
+        contract.saveSheet(invalid, {})
+      }).to.throw(/wrong 'slug'/i)
+    })
+  })
 })
