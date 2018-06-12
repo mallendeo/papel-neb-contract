@@ -10,7 +10,6 @@ export default class PapelApp {
 
     // 👥 Users
     // ----------------------------
-    this.setUsername = this.users.setUsername
     this.saveUser = this.users.saveUser
     this.getUser = this.users.getUser
     this.getUserFullProfile = this.users.getUserFullProfile

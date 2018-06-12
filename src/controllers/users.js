@@ -24,7 +24,7 @@ export default app => {
     store.userMapSize = 0
   }
 
-  const setUsername = (from, username, oldUsername) => {
+  const _setUsername = (from, username, oldUsername) => {
     if (!slugSafe(username)) {
       throw BadRequestError('Invalid characters for "username"')
     }
@@ -45,11 +45,11 @@ export default app => {
     if (user.created) throw ForbiddenError()
 
     if (found && username !== found.username) {
-      setUsername(from, username, found.username)
+      _setUsername(from, username, found.username)
     }
 
     if (!found) {
-      setUsername(from, username)
+      _setUsername(from, username)
       user.created = Date.now()
 
       store.userIndexMap.put(store.userMapSize, from)
@@ -84,7 +84,6 @@ export default app => {
   return {
     init,
     store,
-    setUsername,
     saveUser,
     getUser,
     getUserFullProfile
