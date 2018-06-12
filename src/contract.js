@@ -13,6 +13,7 @@ export default class PapelApp {
     this.setUsername = this.users.setUsername
     this.saveUser = this.users.saveUser
     this.getUser = this.users.getUser
+    this.getUserFullProfile = this.users.getUserFullProfile
 
     // 📝 Sheets
     // ----------------------------

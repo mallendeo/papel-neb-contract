@@ -1,11 +1,10 @@
 import { expect } from 'chai'
-import crypto from 'crypto'
 
 import '../extensions'
 import db from '../extensions/db'
 import { ADDR_USER_1, ADDR_USER_2, ADDR_USER_3 } from './config'
 
-const makeHash = () => crypto.randomBytes(16).toString('hex')
+import { newTxHash } from './helpers'
 
 let contract = null
 
@@ -52,8 +51,7 @@ describe('Sheets', () => {
   })
 
   it('Should create a new sheet', () => {
-    const hash = makeHash()
-    Blockchain.transaction.hash = hash
+    const hash = newTxHash()
 
     contract.saveSheet('myDapp', {
       title: 'An awesome Dapp',
@@ -109,7 +107,7 @@ describe('Sheets', () => {
   })
 
   it('Should save compiled code', () => {
-    Blockchain.transaction.hash = makeHash()
+    newTxHash()
     Blockchain.transaction.from = ADDR_USER_3
 
     contract.saveSheet('vueApp', { // Random generated slug
@@ -125,7 +123,8 @@ describe('Sheets', () => {
   })
 
   it('Should generate a slug', () => {
-    Blockchain.transaction.hash = makeHash()
+    newTxHash()
+
     const newSheet = contract.saveSheet(null, { src: DEMO_SHEET.src })
     const saved = contract.getSheet(newSheet.slug)
 

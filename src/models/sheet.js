@@ -6,6 +6,7 @@ export default class Sheet {
     const pub = typeof isPublic !== 'undefined' ? isPublic : false
 
     this.author = opts.author
+    this.slug = opts.slug
     this.isPublic = pub
     this.title = opts.title
     this.description = opts.description

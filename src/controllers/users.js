@@ -56,14 +56,29 @@ export default app => {
       store.userMapSize += 1
     }
 
-    return store.users.put(from, Object.assign(found || {}, user))
+    return store.users.put(from, { ...(found || {}), ...user })
   }
 
   const getUser = username => {
-    const userId = store.usernameMap.get(username)
-    const user = store.users.get(userId)
+    const userAddr = store.usernameMap.get(username)
+    const user = store.users.get(userAddr)
     if (!user) throw NotFoundError(`Couldn't find user ${username}`)
-    return user
+    return { ...user, userAddr }
+  }
+
+  const getUserFullProfile = username => {
+    const user = getUser(username)
+    const { sheetUserMap, sheets } = app.sheets.store
+    const userSheets = sheetUserMap.get(user.userAddr)
+    return {
+      ...user,
+      sheets: userSheets
+        .map(sheetId => {
+          const { editor, compiled, author, ...info } = sheets.get(sheetId)
+          return info
+        })
+        .filter(sheet => sheet.isPublic && !sheet.isRemoved)
+    }
   }
 
   return {
@@ -71,6 +86,7 @@ export default app => {
     store,
     setUsername,
     saveUser,
-    getUser
+    getUser,
+    getUserFullProfile
   }
 }

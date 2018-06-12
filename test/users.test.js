@@ -2,7 +2,8 @@ import { expect } from 'chai'
 
 import '../extensions'
 import db from '../extensions/db'
-import { ADDR_USER_1, ADDR_USER_2 } from './config'
+import { ADDR_USER_1, ADDR_USER_2, ADDR_USER_3 } from './config'
+import { newTxHash } from './helpers'
 
 let contract = null
 
@@ -75,5 +76,22 @@ describe('Users', () => {
         created: Date.now()
       })
     }).to.throw(/not allowed/)
+  })
+
+  it('Should get user\'s full profile including sheets', () => {
+    // Create new user
+    Blockchain.transaction.from = ADDR_USER_3
+    const createSheet = (slug, opts = {}) => {
+      newTxHash()
+      contract.saveSheet(slug, opts)
+    }
+    contract.saveUser({ username: 'bot' })
+    createSheet('slug')
+    createSheet('demoapp', { isPublic: true })
+    createSheet(null, { isPublic: true })
+    createSheet(null, { isPublic: true, isRemoved: true })
+
+    const profile = contract.getUserFullProfile('bot')
+    console.log(JSON.stringify(profile, null, 2))
   })
 })
