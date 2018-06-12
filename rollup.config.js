@@ -13,7 +13,20 @@ export default {
   plugins: [
     eslint(),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
+      babelrc: false,
+      plugins: [
+        'external-helpers',
+        'transform-object-rest-spread'
+      ],
+      presets: [
+        ['env', {
+          modules: false,
+          targets: {
+            node: 'current'
+          }
+        }]
+      ]
     }),
     nodeResolve({
       jsnext: true,
