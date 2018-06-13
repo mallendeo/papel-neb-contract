@@ -3,43 +3,45 @@ import { expect } from 'chai'
 import '../extensions'
 import db from '../extensions/db'
 import { newTxHash } from './helpers'
-import { ADDR_USER_1, ADDR_USER_2, ADDR_USER_3 } from './config'
+import { ACCOUNTS } from './config'
 
 let contract = null
 
 describe('Users', () => {
   before(() => {
-    Blockchain.transaction.from = ADDR_USER_1
+    Blockchain.transaction.from = ACCOUNTS.mallendeo
     contract = new Contract()
   })
 
-  it('Should init and set props', () => {
+  it('Should check user map size to equal 3', () => {
+    // We added ACCOUNTS on init, so map size should be 4
     expect(db.get('prop_userMapSize').value())
-      .to.be.equal('0')
+      .to.equal('4')
     expect(contract.users.store.userMapSize)
-      .to.be.equal(0)
+      .to.equal(4)
   })
 
   it('Should create a new user', () => {
+    Blockchain.transaction.from = ACCOUNTS.datboi
+
+    expect(() => contract.getUser('datboi')).to.throw()
+
     const newUser = contract.saveUser({
-      username: 'mallendeo',
-      avatar: 'mallendeo.jpg'
+      username: 'datboi',
+      avatar: 'datboi.jpg'
     })
 
     expect(newUser).to.be.an('object')
+    expect(contract.users.store.userMapSize).to.equal(5)
   })
 
   it('Should get user info', () => {
-    const userInfo = contract.getUser('mallendeo')
+    const userInfo = contract.getUser('datboi')
     expect(userInfo).to.be.an('object')
   })
 
   it('Should throw a existing username error', () => {
-    Blockchain.transaction.from = ADDR_USER_2
-    contract.saveUser({
-      username: 'testuser',
-      avatar: 'testuser.jpg'
-    })
+    Blockchain.transaction.from = ACCOUNTS.testuser
 
     expect(() => {
       contract.saveUser({
@@ -50,14 +52,13 @@ describe('Users', () => {
   })
 
   it('Should throw when trying to save a invalid username', () => {
-    Blockchain.transaction.from = ADDR_USER_2
     expect(() => {
       contract.saveUser({ username: 'invalid username' })
     }).to.throw(/invalid/i)
   })
 
   it('Should change an existing user username', () => {
-    // Current user is ADDR_USER_2
+    // Current user is testuser
     const newUsername = 'testuser2018'
     expect(() => contract.saveUser({ username: newUsername }))
       .to.not.throw()
@@ -91,7 +92,7 @@ describe('Users', () => {
 
   it('Should get user\'s full profile including sheets', () => {
     // Create new user
-    Blockchain.transaction.from = ADDR_USER_3
+    Blockchain.transaction.from = ACCOUNTS.bot
     const createSheet = (slug, opts = {}) => {
       newTxHash()
       contract.saveSheet(slug, opts)

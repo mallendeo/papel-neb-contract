@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import '../extensions'
 import db from '../extensions/db'
-import { ADDR_USER_1, ADDR_USER_2, ADDR_USER_3 } from './config'
+import { ACCOUNTS } from './config'
 
 import { newTxHash } from './helpers'
 
@@ -40,14 +40,14 @@ const DEMO_SHEET = {
 
 describe('Sheets', () => {
   before(() => {
-    Blockchain.transaction.from = ADDR_USER_1
+    Blockchain.transaction.from = ACCOUNTS.mallendeo
     contract = new Contract()
   })
 
   it('Should init and set props', () => {
-    expect(db.get('prop_sheetMapSize').value()).to.be.equal('0')
+    expect(db.get('prop_sheetMapSize').value()).to.equal('0')
     expect(contract.sheets.store.sheetMapSize)
-      .to.be.equal(0)
+      .to.equal(0)
   })
 
   it('Should create a new sheet', () => {
@@ -93,7 +93,7 @@ describe('Sheets', () => {
   })
 
   it('Should throw when updating other user sheet', () => {
-    Blockchain.transaction.from = ADDR_USER_2
+    Blockchain.transaction.from = ACCOUNTS.testuser
     expect(() => {
       contract.saveSheet('myDapp', {
         src: {
@@ -108,7 +108,7 @@ describe('Sheets', () => {
 
   it('Should save compiled code', () => {
     newTxHash()
-    Blockchain.transaction.from = ADDR_USER_3
+    Blockchain.transaction.from = ACCOUNTS.bot
 
     contract.saveSheet('vueApp', { // Random generated slug
       isPublic: true,

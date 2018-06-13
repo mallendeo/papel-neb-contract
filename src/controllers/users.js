@@ -80,7 +80,10 @@ export default app => {
   const getUser = username => {
     const userAddr = store.usernameMap.get(username)
     const user = store.users.get(userAddr)
-    if (!user) throw NotFoundError(`Couldn't find user ${username}`)
+    if (!user || user.isBanned) {
+      throw NotFoundError(`Couldn't find user ${username}`)
+    }
+
     return { ...user, userAddr }
   }
 

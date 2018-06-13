@@ -1,22 +1,24 @@
 import { initStorage } from '../lib/helpers'
-import { AppError, UnauthorizedError } from '../lib/errors'
+import { AppError, UnauthorizedError, NotFoundError } from '../lib/errors'
 
 export default app => {
   const store = initStorage(app)({
     admin: null
   })
 
-  const { from } = Blockchain.transaction
-
   const init = () => {
     store.admin = Blockchain.transaction.from
   }
 
   const _checkPermissions = (role = 'admin') => {
+    const { from } = Blockchain.transaction
     if (store.admin === from) return
 
     const userStore = app.users.store
     const user = userStore.users.get(from)
+
+    if (!user.roles) throw UnauthorizedError()
+
     const found = user.roles.find(r => r === role)
     if (!found) throw UnauthorizedError()
   }
@@ -24,6 +26,8 @@ export default app => {
   const _updateUser = (username, opts) => {
     const userStore = app.users.store
     const userAddr = userStore.usernameMap.get(username)
+    if (!userAddr) throw NotFoundError(`Couldn't find user ${username}`)
+
     const profile = userStore.users.get(userAddr)
     return userStore.users.put(userAddr, { ...profile, ...opts })
   }
@@ -39,6 +43,7 @@ export default app => {
   }
 
   const withdraw = balance => {
+    const { from } = Blockchain.transaction
     if (store.admin !== from) {
       throw UnauthorizedError(`You're not the owner.`)
     }
