@@ -60,7 +60,7 @@ export default app => {
       }
     }
 
-    if (!slugSafe(slug)) throw BadRequestError(`Invalid 'slug' format`)
+    if (!slugSafe(slug)) throw BadRequestError(`Invalid 'slug' format: ${slug}`)
 
     if (!opts) throw MissingParameterError('opts')
 
