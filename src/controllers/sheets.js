@@ -20,7 +20,6 @@ import {
 export default app => {
   const store = initStorage(app)({
     sheetSlugMap: { map: true },
-    sheetIndexMap: { map: true },
     sheetMapSize: null,
     sheetUserMap: { map: true },
     sheets: {
