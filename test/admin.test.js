@@ -21,13 +21,6 @@ describe('Admin', () => {
   it('Should set user roles', () => {
     const roles = ['admin', 'moderator']
     contract.admin.setUserRoles('mallendeo', roles)
-    expect(contract.users.getUser('mallendeo').roles)
-      .to.deep.equal(roles)
-  })
-
-  it('Should set user roles', () => {
-    const roles = ['admin', 'moderator']
-    contract.admin.setUserRoles('mallendeo', roles)
     contract.admin.setUserRoles('testuser', ['moderator'])
 
     expect(contract.users.getUser('mallendeo').roles)
