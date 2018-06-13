@@ -68,7 +68,9 @@ describe('Sheets', () => {
     })
 
     const saved = contract.getSheet('myDapp')
+    const index = db.get(`@map_sheetSlugMap['myDapp']`).value()
 
+    expect(index).to.equal('0')
     expect(saved).to.be.an('object')
       .and.have.property('author', Blockchain.transaction.from)
   })
@@ -128,7 +130,7 @@ describe('Sheets', () => {
     ['invalid slug', '$invalid', 'inválid slúg'].forEach(invalid => {
       expect(() => {
         contract.saveSheet(invalid, {})
-      }).to.throw(/wrong 'slug'/i)
+      }).to.throw(/invalid 'slug'/i)
     })
   })
 })

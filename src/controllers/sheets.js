@@ -47,6 +47,8 @@ export default app => {
     return obj
   }
 
+  const _checkId = id => typeof id === 'undefined' || id === null
+
   const saveSheet = (slug, opts) => {
     const { from } = Blockchain.transaction
 
@@ -58,12 +60,12 @@ export default app => {
       }
     }
 
-    if (!slugSafe(slug)) throw BadRequestError(`Wrong 'slug' format`)
+    if (!slugSafe(slug)) throw BadRequestError(`Invalid 'slug' format`)
 
     if (!opts) throw MissingParameterError('opts')
 
     let sheetId = store.sheetSlugMap.get(slug)
-    if (!sheetId) {
+    if (_checkId(sheetId)) {
       sheetId = store.sheetMapSize
       store.sheetSlugMap.put(slug, sheetId)
 
@@ -90,13 +92,13 @@ export default app => {
   }
 
   const getSheet = slug => {
-    const slugId = store.sheetSlugMap.get(slug)
+    const sheetId = store.sheetSlugMap.get(slug)
 
-    if (typeof slugId === 'undefined' && slugId === null) {
+    if (_checkId(sheetId)) {
       throw NotFoundError()
     }
 
-    const sheet = store.sheets.get(slugId)
+    const sheet = store.sheets.get(sheetId)
     if (sheet.isRemoved) throw NotFoundError()
 
     return sheet
