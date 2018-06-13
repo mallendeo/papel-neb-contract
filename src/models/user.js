@@ -5,5 +5,8 @@ export default class User {
     this.avatar = info.avatar
     this.bio = info.bio
     this.created = new BigNumber(info.created)
+
+    this.isBanned = info.isBanned
+    this.roles = info.roles
   }
 }

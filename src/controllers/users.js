@@ -1,11 +1,11 @@
 import User from '../models/user'
 import { initStorage, slugSafe } from '../lib/helpers'
 import {
-  ForbiddenError,
   MissingParameterError,
   NotFoundError,
   ConflictError,
-  BadRequestError
+  BadRequestError,
+  UnauthorizedError
 } from '../lib/errors'
 
 export default app => {
@@ -22,6 +22,15 @@ export default app => {
 
   const init = () => {
     store.userMapSize = 0
+  }
+
+  const _disallowMiddleware = (obj, truthy = true, props = ['isBanned']) => {
+    const deny = props.some(prop =>
+      truthy
+        ? obj[prop]
+        : typeof obj[prop] !== 'undefined'
+    )
+    if (deny) throw UnauthorizedError()
   }
 
   const _setUsername = (from, username, oldUsername) => {
@@ -42,7 +51,16 @@ export default app => {
     const { from } = Blockchain.transaction
     const found = store.users.get(from)
 
-    if (user.created) throw ForbiddenError()
+    // Check if the user is banned
+    if (found) _disallowMiddleware(found, true)
+
+    // Prevent user for changing his status and roles
+    _disallowMiddleware(user, false, [
+      'isBanned',
+      'roles',
+      'created',
+      'updated'
+    ])
 
     if (found && username !== found.username) {
       _setUsername(from, username, found.username)

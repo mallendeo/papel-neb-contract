@@ -22,6 +22,8 @@ export default class PapelApp {
     // 🔐 Admin
     // ----------------------------
     this.withdraw = this.admin.withdraw
+    this.setUserBan = this.admin.setUserBan
+    this.setUserRoles = this.admin.setUserRoles
   }
 
   init () {

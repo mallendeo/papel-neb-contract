@@ -69,11 +69,22 @@ describe('Users', () => {
     expect(updated).to.have.property('avatar', 'testuser.jpg')
   })
 
-  it('Should\'t let the user change its creation date', () => {
+  it('Shouldn\'t let the user change its creation date', () => {
     expect(() => {
       contract.saveUser({
         username: 'testuser2018',
-        created: Date.now()
+        created: Date.now(),
+        updated: Date.now()
+      })
+    }).to.throw(/not allowed/)
+  })
+
+  it('Shouldn\'t let the user change its roles or status', () => {
+    expect(() => {
+      contract.saveUser({
+        username: 'bad_user',
+        isBanned: false,
+        roles: ['admin', 'moderator']
       })
     }).to.throw(/not allowed/)
   })
