@@ -34,22 +34,22 @@ export default app => {
     store.sheetMapSize = 0
   }
 
-  const _update = (slug, hash, opts, init) => {
+  const _update = (slug, id, opts, init) => {
     if (opts.created) throw ForbiddenError()
 
     const author = Blockchain.transaction.from
     const initObj = init ? { created: Date.now() } : {}
-    const sheet = store.sheets.get(hash) || {}
+    const sheet = store.sheets.get(id) || {}
     const update = { updated: Date.now(), author, slug }
 
     const obj = merge.all([sheet, opts, update, initObj])
-    store.sheets.put(hash, obj)
+    store.sheets.put(id, obj)
 
     return obj
   }
 
   const saveSheet = (slug, opts) => {
-    const { from, hash } = Blockchain.transaction
+    const { from } = Blockchain.transaction
 
     if (!slug) {
       slug = rndSlug(strToCharCode(from))
@@ -63,39 +63,41 @@ export default app => {
 
     if (!opts) throw MissingParameterError('opts')
 
-    let sheetHash = store.sheetSlugMap.get(slug)
-    if (!sheetHash) {
-      sheetHash = hash
-      store.sheetSlugMap.put(slug, hash)
-      store.sheetIndexMap.put(store.sheetMapSize, hash)
-      store.sheetMapSize += 1
+    let sheetId = store.sheetSlugMap.get(slug)
+    if (!sheetId) {
+      sheetId = store.sheetMapSize
+      store.sheetSlugMap.put(slug, sheetId)
 
       const userSheetList = store.sheetUserMap.get(from) || []
-      userSheetList.push(hash)
+      userSheetList.push(store.sheetMapSize)
       store.sheetUserMap.put(from, userSheetList)
 
-      return _update(slug, hash, opts, true)
+      store.sheetMapSize += 1
+      return _update(slug, sheetId, opts, true)
     }
 
-    if (store.sheets.get(sheetHash).author !== from) {
+    if (store.sheets.get(sheetId).author !== from) {
       throw UnauthorizedError(`You can't edit a sheet that isn't yours`)
     }
 
-    const slugSheetHash = store.sheetSlugMap.get(slug)
-    if (slugSheetHash && slugSheetHash !== sheetHash) {
+    const slugSheetId = store.sheetSlugMap.get(slug)
+    if (slugSheetId && slugSheetId !== sheetId) {
       throw ForbiddenError('This slug is already taken')
     }
 
-    store.sheetSlugMap.put(slug, sheetHash)
+    store.sheetSlugMap.put(slug, sheetId)
 
-    return _update(slug, sheetHash, opts)
+    return _update(slug, sheetId, opts)
   }
 
   const getSheet = slug => {
-    const hash = store.sheetSlugMap.get(slug)
-    if (!hash) throw NotFoundError()
+    const slugId = store.sheetSlugMap.get(slug)
 
-    const sheet = store.sheets.get(hash)
+    if (typeof slugId === 'undefined' && slugId === null) {
+      throw NotFoundError()
+    }
+
+    const sheet = store.sheets.get(slugId)
     if (sheet.isRemoved) throw NotFoundError()
 
     return sheet

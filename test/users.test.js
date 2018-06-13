@@ -2,7 +2,6 @@ import { expect } from 'chai'
 
 import '../extensions'
 import db from '../extensions/db'
-import { newTxHash } from './helpers'
 import { ACCOUNTS } from './config'
 
 let contract = null
@@ -93,15 +92,11 @@ describe('Users', () => {
   it('Should get user\'s full profile including sheets', () => {
     // Create new user
     Blockchain.transaction.from = ACCOUNTS.bot
-    const createSheet = (slug, opts = {}) => {
-      newTxHash()
-      contract.saveSheet(slug, opts)
-    }
     contract.saveUser({ username: 'bot' })
-    createSheet('slug')
-    createSheet('demoapp', { isPublic: true })
-    createSheet(null, { isPublic: true })
-    createSheet(null, { isPublic: true, isRemoved: true })
+    contract.saveSheet('slug', {})
+    contract.saveSheet('demoapp', { isPublic: true })
+    contract.saveSheet(null, { isPublic: true })
+    contract.saveSheet(null, { isPublic: true, isRemoved: true })
 
     const profile = contract.getUserFullProfile('bot')
     expect(profile).to.be.an('object')

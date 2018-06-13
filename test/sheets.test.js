@@ -4,8 +4,6 @@ import '../extensions'
 import db from '../extensions/db'
 import { ACCOUNTS } from './config'
 
-import { newTxHash } from './helpers'
-
 let contract = null
 
 const DEMO_SHEET = {
@@ -51,8 +49,6 @@ describe('Sheets', () => {
   })
 
   it('Should create a new sheet', () => {
-    const hash = newTxHash()
-
     contract.saveSheet('myDapp', {
       title: 'An awesome Dapp',
       src: {
@@ -71,7 +67,8 @@ describe('Sheets', () => {
       }
     })
 
-    const saved = JSON.parse(db.get('@map_sheets').value()[hash])
+    const saved = contract.getSheet('myDapp')
+
     expect(saved).to.be.an('object')
       .and.have.property('author', Blockchain.transaction.from)
   })
@@ -88,8 +85,6 @@ describe('Sheets', () => {
 
     const sheet = contract.getSheet('myDapp')
     expect(sheet.src.html.code).to.equal('<span>test</span>')
-    expect(sheet.src).to.have.property('css').not.undefined
-    expect(sheet.src).to.have.property('js').not.undefined
   })
 
   it('Should throw when updating other user sheet', () => {
@@ -107,7 +102,6 @@ describe('Sheets', () => {
   })
 
   it('Should save compiled code', () => {
-    newTxHash()
     Blockchain.transaction.from = ACCOUNTS.bot
 
     contract.saveSheet('vueApp', { // Random generated slug
@@ -123,8 +117,6 @@ describe('Sheets', () => {
   })
 
   it('Should generate a slug', () => {
-    newTxHash()
-
     const newSheet = contract.saveSheet(null, { src: DEMO_SHEET.src })
     const saved = contract.getSheet(newSheet.slug)
 
@@ -134,7 +126,6 @@ describe('Sheets', () => {
 
   it('Should throw when saving a invalid slug', () => {
     ['invalid slug', '$invalid', 'inválid slúg'].forEach(invalid => {
-      newTxHash()
       expect(() => {
         contract.saveSheet(invalid, {})
       }).to.throw(/wrong 'slug'/i)
