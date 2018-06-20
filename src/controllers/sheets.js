@@ -44,7 +44,7 @@ export default app => {
     const obj = merge.all([sheet, opts, update, initObj])
     store.sheets.put(id, obj)
 
-    return obj
+    return { slug }
   }
 
   const _checkId = id => typeof id === 'undefined' || id === null

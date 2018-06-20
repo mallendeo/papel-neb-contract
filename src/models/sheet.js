@@ -9,15 +9,15 @@ export default class Sheet {
     this.description = opts.description
     this.isRemoved = opts.isRemoved
 
-    // Code
-    this.src = opts.src
-    this.compiled = opts.compiled
-    this.editor = opts.editor || {
-      updateDelay: 0,
-      refreshPage: false,
-      indentWidth: 2,
-      useSpaces: true
-    }
+    /**
+     * Code and config
+     *
+     * - IPFS_HASH
+     *  - src/
+     *  - dist/
+     *  - config.json
+     */
+    this.dirHash = opts.dirHash
 
     this.created = new BigNumber(opts.created)
     this.updated = new BigNumber(opts.updated)

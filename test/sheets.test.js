@@ -6,36 +6,6 @@ import { ACCOUNTS } from './config'
 
 let contract = null
 
-const DEMO_SHEET = {
-  src: {
-    html: {
-      type: 'pug',
-      code: '#app'
-    },
-    js: {
-      code: `new Vue({ el: '#app' })`,
-      libs: ['https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js']
-    },
-    css: {
-      code: '#app \n  display flex',
-      libs: ['https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css']
-    }
-  },
-  compiled: {
-    html: {
-      code: '<div id="app"></span>'
-    },
-    js: {
-      code: `new Vue({ el: '#app' })`,
-      libs: ['https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js']
-    },
-    css: {
-      code: '#app { display: flex }',
-      libs: ['https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css']
-    }
-  }
-}
-
 describe('Sheets', () => {
   before(() => {
     Blockchain.transaction.from = ACCOUNTS.mallendeo
@@ -51,20 +21,7 @@ describe('Sheets', () => {
   it('Should create a new sheet', () => {
     contract.saveSheet('myDapp', {
       title: 'An awesome Dapp',
-      src: {
-        html: {
-          type: 'pug',
-          code: 'h1 test'
-        },
-        css: {
-          type: 'stylus',
-          code: 'h1 { color: #333 }'
-        },
-        js: {
-          type: 'babel',
-          code: `console.log('hi')`
-        }
-      }
+      dirHash: 'some_ipfs_hash'
     })
 
     const saved = contract.getSheet('myDapp')
@@ -77,28 +34,19 @@ describe('Sheets', () => {
 
   it('Should update an existing sheet', () => {
     contract.saveSheet('myDapp', {
-      src: {
-        html: {
-          type: 'html',
-          code: '<span>test</span>'
-        }
-      }
+      dirHash: 'some_updated_ipfs_hash'
     })
 
     const sheet = contract.getSheet('myDapp')
-    expect(sheet.src.html.code).to.equal('<span>test</span>')
+    expect(sheet.title).to.equal('An awesome Dapp')
+    expect(sheet.dirHash).to.equal('some_updated_ipfs_hash')
   })
 
   it('Should throw when updating other user sheet', () => {
     Blockchain.transaction.from = ACCOUNTS.testuser
     expect(() => {
       contract.saveSheet('myDapp', {
-        src: {
-          html: {
-            type: 'html',
-            code: '<span>test</span>'
-          }
-        }
+        dirHash: 'ipfs_hash'
       })
     }).to.throw(/can't edit/)
   })
@@ -108,22 +56,20 @@ describe('Sheets', () => {
 
     contract.saveSheet('vueApp', { // Random generated slug
       isPublic: true,
-      src: DEMO_SHEET.src,
-      compiled: DEMO_SHEET.compiled
+      dirHash: 'ipfs_hash'
     })
 
     const saved = contract.getSheet('vueApp')
     expect(saved.isPublic).to.be.true
-    expect(saved.src).to.deep.equal(DEMO_SHEET.src)
-    expect(saved.compiled).to.deep.equal(DEMO_SHEET.compiled)
+    expect(saved.dirHash).to.deep.equal('ipfs_hash')
   })
 
   it('Should generate a slug', () => {
-    const newSheet = contract.saveSheet(null, { src: DEMO_SHEET.src })
+    const newSheet = contract.saveSheet(null, { dirHash: 'ipfs_hash' })
     const saved = contract.getSheet(newSheet.slug)
 
     expect(newSheet).to.haveOwnProperty('slug')
-    expect(saved.src).to.deep.equal(DEMO_SHEET.src)
+    expect(saved.dirHash).to.deep.equal('ipfs_hash')
   })
 
   it('Should throw when saving a invalid slug', () => {
