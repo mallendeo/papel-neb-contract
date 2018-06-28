@@ -95,7 +95,7 @@ export default app => {
 
     return {
       ...user,
-      sheets: userSheets
+      sheets: !userSheets ? [] : userSheets
         .map(sheetId => {
           const { editor, compiled, author, ...info } = sheets.get(sheetId)
           return info
