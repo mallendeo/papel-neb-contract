@@ -91,6 +91,8 @@ export default app => {
     const user = getUser(username)
     const { sheetUserMap, sheets } = app.sheets.store
     const userSheets = sheetUserMap.get(user.userAddr)
+    const owner = user.userAddr === Blockchain.transaction.from
+
     return {
       ...user,
       sheets: userSheets
@@ -98,7 +100,7 @@ export default app => {
           const { editor, compiled, author, ...info } = sheets.get(sheetId)
           return info
         })
-        .filter(sheet => sheet.isPublic && !sheet.isRemoved)
+        .filter(sheet => (owner || sheet.isPublic) && !sheet.isRemoved)
     }
   }
 

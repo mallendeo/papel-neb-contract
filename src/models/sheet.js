@@ -12,14 +12,15 @@ export default class Sheet {
     /**
      * Code and config
      *
-     * - IPFS_HASH
+     * - IPFS_HASH -> rootHash
      *  - src/
-     *  - dist/
+     *  - dist/ -> distHash
      *  - config.json
      */
-    this.dirHash = opts.dirHash
+    this.rootHash = opts.rootHash
+    this.distHash = opts.distHash
 
-    this.created = new BigNumber(opts.created)
-    this.updated = new BigNumber(opts.updated)
+    this.created = opts.created
+    this.updated = opts.updated
   }
 }

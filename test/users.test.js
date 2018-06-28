@@ -102,8 +102,8 @@ describe('Users', () => {
     expect(profile).to.be.an('object')
 
     profile.sheets.forEach(sheet => {
-      expect(sheet.created).to.be.a('object')
-      expect(sheet.updated).to.be.a('object')
+      expect(sheet.created).to.be.a('number')
+      expect(sheet.updated).to.be.a('number')
       expect(sheet).to.have.property('isPublic')
     })
   })

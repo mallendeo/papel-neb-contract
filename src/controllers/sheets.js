@@ -37,7 +37,9 @@ export default app => {
     if (opts.created) throw ForbiddenError()
 
     const author = Blockchain.transaction.from
-    const initObj = init ? { created: Date.now() } : {}
+    const now = Date.now()
+
+    const initObj = init ? { created: now, updated: now } : {}
     const sheet = store.sheets.get(id) || {}
     const update = { updated: Date.now(), author, slug }
 
