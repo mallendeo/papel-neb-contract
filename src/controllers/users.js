@@ -1,11 +1,12 @@
 import User from '../models/user'
-import { initStorage, slugSafe } from '../lib/helpers'
+import { initStorage, slugSafe, paginate } from '../lib/helpers'
+
 import {
-  MissingParameterError,
   NotFoundError,
   ConflictError,
   BadRequestError,
-  UnauthorizedError
+  UnauthorizedError,
+  ForbiddenError
 } from '../lib/errors'
 
 export default app => {
@@ -34,14 +35,50 @@ export default app => {
   }
 
   const _setUsername = (from, username, oldUsername) => {
-    if (!slugSafe(username)) {
+    if (!username || !slugSafe(username)) {
       throw BadRequestError('Invalid characters for "username"')
     }
 
     const ownerAddr = store.usernameMap.get(username)
+
     if (ownerAddr) throw ConflictError(`Username ${username} is taken`)
-    if (oldUsername) store.usernameMap.del(oldUsername)
+
+    if (oldUsername) {
+      const oldUserAddr = store.usernameMap.get(oldUsername)
+      if (oldUserAddr !== Blockchain.transaction.from) {
+        throw UnauthorizedError()
+      }
+
+      store.usernameMap.del(oldUsername)
+    }
+
     store.usernameMap.put(username, from)
+  }
+
+  const _isOwner = user => user.userAddr === Blockchain.transaction.from
+
+  const _userSheets = (username, type = 'showcase') => {
+    const user = getUser(username)
+    const { sheetUserMap, sheets } = app.sheets.store
+    let userSheets = []
+
+    switch (type) {
+      case 'showcase':
+        userSheets = (user.showcase || [])
+          .map(slug => app.sheets.store.sheetSlugMap.get(slug))
+        break
+      case 'all':
+        userSheets = sheetUserMap.get(user.userAddr)
+        break
+    }
+
+    const owner = _isOwner(user)
+    return (userSheets || [])
+      .map(sheetId => {
+        const { editor, compiled, author, ...info } = sheets.get(sheetId)
+        return info
+      })
+      .filter(sheet => (owner || sheet.isPublic) && !sheet.isRemoved)
   }
 
   const saveUser = user => {
@@ -98,28 +135,22 @@ export default app => {
     return { ...user, userAddr }
   }
 
-  const getUserFullProfile = username => {
-    const user = getUser(username)
-    const { sheetUserMap, sheets } = app.sheets.store
-    const userSheets = sheetUserMap.get(user.userAddr)
-    const owner = user.userAddr === Blockchain.transaction.from
-
-    return {
-      ...user,
-      sheets: !userSheets ? [] : userSheets
-        .map(sheetId => {
-          const { editor, compiled, author, ...info } = sheets.get(sheetId)
-          return info
-        })
-        .filter(sheet => (owner || sheet.isPublic) && !sheet.isRemoved)
-    }
+  const getUserSheets = (username, page = 1) => {
+    const sheets = _userSheets(username, 'all')
+    return paginate(sheets, 6)(page)
   }
+
+  const getUserFullProfile = username => ({
+    ...getUser(username),
+    showcase: _userSheets(username, 'showcase')
+  })
 
   return {
     init,
     store,
     saveUser,
     getUser,
+    getUserSheets,
     getUserFullProfile
   }
 }
