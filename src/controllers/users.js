@@ -135,9 +135,14 @@ export default app => {
     return { ...user, userAddr }
   }
 
-  const getUserSheets = (username, page = 1) => {
+  const getUserSheets = (username, page = 1, opts = {}) => {
     const sheets = _userSheets(username, 'all')
-    return paginate(sheets, 6)(page)
+    const arr = opts.reverse ? sheets.reverse() : sheets
+
+    return {
+      results: paginate(arr, opts.limit || 6)(page),
+      total: arr.length
+    }
   }
 
   const getUserFullProfile = username => ({
