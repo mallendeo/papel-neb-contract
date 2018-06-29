@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
-import '../extensions'
-import db from '../extensions/db'
-import { ACCOUNTS } from './config'
+import '../../extensions'
+import db from '../../extensions/db'
+import { ACCOUNTS } from '../config'
 
 let contract = null
 

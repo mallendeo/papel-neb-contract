@@ -1,6 +1,6 @@
-import '../extensions'
-import db from '../extensions/db'
-import { ACCOUNTS } from './config'
+import '../../extensions'
+import db from '../../extensions/db'
+import { ACCOUNTS } from '../config'
 
 // This will run before all tests
 before(() => {

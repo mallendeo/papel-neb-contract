@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
-import '../extensions'
-import db from '../extensions/db'
-import { ACCOUNTS } from './config'
+import '../../extensions'
+import db from '../../extensions/db'
+import { ACCOUNTS } from '../config'
 
 let contract = null
 
@@ -31,8 +31,8 @@ describe('Sheets', () => {
     expect(saved).to.be.an('object')
       .and.have.property('author', Blockchain.transaction.from)
 
-    const userProfile = contract.getUserFullProfile('mallendeo')
-    expect(userProfile.sheets).to.have.lengthOf(1)
+    const sheets = contract.getUserSheets('mallendeo')
+    expect(sheets).to.have.lengthOf(1)
   })
 
   it('Should update an existing sheet', () => {

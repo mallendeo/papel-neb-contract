@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
-import '../extensions'
-import db from '../extensions/db'
-import { ACCOUNTS } from './config'
+import '../../extensions'
+import db from '../../extensions/db'
+import { ACCOUNTS } from '../config'
 
 let contract = null
 
@@ -98,13 +98,25 @@ describe('Users', () => {
     contract.saveSheet(null, { isPublic: true })
     contract.saveSheet(null, { isPublic: true, isRemoved: true })
 
+    contract.saveUser({ showcase: ['slug', 'demoapp'] })
+
     const profile = contract.getUserFullProfile('bot')
+    const sheets = contract.getUserSheets('bot')
     expect(profile).to.be.an('object')
 
-    profile.sheets.forEach(sheet => {
+    expect(sheets).to.have.lengthOf(5)
+    expect(profile.showcase).to.have.lengthOf(2)
+
+    profile.showcase.forEach(sheet => {
       expect(sheet.created).to.be.a('number')
       expect(sheet.updated).to.be.a('number')
       expect(sheet).to.have.property('isPublic')
     })
+  })
+
+  it('Should update showcase', () => {
+    contract.saveUser({ showcase: ['slug'] })
+    const profile = contract.getUserFullProfile('bot')
+    expect(profile.showcase).to.have.lengthOf(1)
   })
 })
