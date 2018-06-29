@@ -55,3 +55,8 @@ export const strToCharCode = str => str
 export const rndSlug = (seed = 0) => Math.floor(
   Math.random() * Date.now() + seed
 ).toString(36)
+
+export const paginate = (arr, size) => (page = 1) => {
+  const num = page - 1
+  return arr.slice(num * size, (num + 1) * size)
+}
