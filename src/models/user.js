@@ -5,6 +5,7 @@ export default class User {
     this.avatar = info.avatar
     this.bio = info.bio
     this.created = info.created
+    this.showcase = info.showcase
 
     this.isBanned = info.isBanned
     this.roles = info.roles

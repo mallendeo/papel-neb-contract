@@ -45,8 +45,18 @@ export default app => {
   }
 
   const saveUser = user => {
-    const { username } = user
-    if (!username) throw MissingParameterError('username')
+    const newUser = { ...user }
+    const { username, showcase } = newUser
+
+    if (showcase && showcase.length) {
+      const notAllowed = showcase
+        .map(app.sheets.getSheet)
+        .some(sheet => sheet.author !== Blockchain.transaction.from)
+
+      if (notAllowed) {
+        throw ForbiddenError(`You can't add other user's sheets to your showcase`)
+      }
+    }
 
     const { from } = Blockchain.transaction
     const found = store.users.get(from)
@@ -55,30 +65,31 @@ export default app => {
     if (found) _disallowMiddleware(found, true)
 
     // Prevent user for changing his status and roles
-    _disallowMiddleware(user, false, [
+    _disallowMiddleware(newUser, false, [
       'isBanned',
       'roles',
       'created',
       'updated'
     ])
 
-    if (found && username !== found.username) {
+    if (found && username && username !== found.username) {
       _setUsername(from, username, found.username)
     }
 
     if (!found) {
-      _setUsername(from, username)
-      user.created = Date.now()
+      if (username) _setUsername(from, username)
+      newUser.created = Date.now()
 
       store.userIndexMap.put(store.userMapSize, from)
       store.userMapSize += 1
     }
 
-    return store.users.put(from, { ...(found || {}), ...user })
+    return store.users.put(from, { ...(found || {}), ...newUser })
   }
 
   const getUser = username => {
     const userAddr = store.usernameMap.get(username)
+
     const user = store.users.get(userAddr)
     if (!user || user.isBanned) {
       throw NotFoundError(`Couldn't find user ${username}`)
