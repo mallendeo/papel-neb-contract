@@ -31,8 +31,8 @@ describe('Sheets', () => {
     expect(saved).to.be.an('object')
       .and.have.property('author', Blockchain.transaction.from)
 
-    const sheets = contract.getUserSheets('mallendeo')
-    expect(sheets).to.have.lengthOf(1)
+    const { results } = contract.getUserSheets('mallendeo')
+    expect(results).to.have.lengthOf(1)
   })
 
   it('Should update an existing sheet', () => {

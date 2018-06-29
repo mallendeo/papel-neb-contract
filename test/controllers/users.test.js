@@ -101,10 +101,10 @@ describe('Users', () => {
     contract.saveUser({ showcase: ['slug', 'demoapp'] })
 
     const profile = contract.getUserFullProfile('bot')
-    const sheets = contract.getUserSheets('bot')
+    const { results } = contract.getUserSheets('bot')
     expect(profile).to.be.an('object')
 
-    expect(sheets).to.have.lengthOf(5)
+    expect(results).to.have.lengthOf(5)
     expect(profile.showcase).to.have.lengthOf(2)
 
     profile.showcase.forEach(sheet => {
@@ -118,5 +118,16 @@ describe('Users', () => {
     contract.saveUser({ showcase: ['slug'] })
     const profile = contract.getUserFullProfile('bot')
     expect(profile.showcase).to.have.lengthOf(1)
+  })
+
+  it('Should get a paginated sheet list', () => {
+    Array(20).fill(null).forEach((el, index) => {
+      contract.saveSheet(`sheet_n_${index}`, { isPublic: true })
+    })
+
+    const { results, total } = contract.getUserSheets('bot', 3, { reverse: true })
+
+    expect(total).to.equal(25)
+    expect(results[0]).to.have.property('slug', 'sheet_n_7')
   })
 })
