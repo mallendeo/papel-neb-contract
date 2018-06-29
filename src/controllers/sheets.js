@@ -95,13 +95,12 @@ export default app => {
 
   const getSheet = slug => {
     const sheetId = store.sheetSlugMap.get(slug)
+    const err = NotFoundError(`Couldn't find '${slug}'`)
 
-    if (_checkId(sheetId)) {
-      throw NotFoundError()
-    }
+    if (_checkId(sheetId)) throw err
 
     const sheet = store.sheets.get(sheetId)
-    if (sheet.isRemoved) throw NotFoundError()
+    if (sheet.isRemoved) throw err
 
     return sheet
   }
