@@ -5,7 +5,7 @@
   "author": "mallendeo",
   "scripts": {
     "build": "rimraf dist && rollup -c",
-    "mocha": "mocha --require babel-core/register test/**/*.test.js",
+    "mocha": "mocha --require babel-core/register test/test.js",
     "test": "NODE_ENV=test npm run mocha --",
     "test:watch": "npm run test -- --watch",
     "test:db": "rimraf tmp && npm run mocha -- --watch"
