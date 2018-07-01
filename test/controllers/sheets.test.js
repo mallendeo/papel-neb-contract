@@ -18,70 +18,97 @@ describe('Sheets', () => {
       .to.equal(0)
   })
 
-  it('Should create a new sheet', () => {
-    contract.saveSheet('myDapp', {
-      title: 'An awesome Dapp',
-      dirHash: 'some_ipfs_hash'
-    })
-
-    const saved = contract.getSheet('myDapp')
-    const index = db.get(`@map_sheetSlugMap['myDapp']`).value()
-
-    expect(index).to.equal('0')
-    expect(saved).to.be.an('object')
-      .and.have.property('author', Blockchain.transaction.from)
-
-    const { results } = contract.getUserSheets('mallendeo')
-    expect(results).to.have.lengthOf(1)
-  })
-
-  it('Should update an existing sheet', () => {
-    contract.saveSheet('myDapp', {
-      rootHash: 'some_updated_ipfs_hash'
-    })
-
-    const sheet = contract.getSheet('myDapp')
-    expect(sheet.title).to.equal('An awesome Dapp')
-    expect(sheet.rootHash).to.equal('some_updated_ipfs_hash')
-  })
-
-  it('Should throw when updating other user sheet', () => {
-    Blockchain.transaction.from = ACCOUNTS.testuser
-    expect(() => {
+  describe('create', () => {
+    it('Should create a new sheet', () => {
       contract.saveSheet('myDapp', {
-        dirHash: 'ipfs_hash'
+        title: 'An awesome Dapp',
+        dirHash: 'some_ipfs_hash'
       })
-    }).to.throw(/can't edit/)
-  })
 
-  it('Should save ipfs hash', () => {
-    Blockchain.transaction.from = ACCOUNTS.bot
+      const saved = contract.getSheet('myDapp')
+      const index = db.get(`@map_sheetSlugMap['myDapp']`).value()
 
-    contract.saveSheet('vueApp', { // Random generated slug
-      isPublic: true,
-      rootHash: 'ipfs_root_hash',
-      distHash: 'ipfs_dist_hash'
+      expect(index).to.equal('0')
+      expect(saved).to.be.an('object')
+        .and.have.property('author', Blockchain.transaction.from)
+
+      const { results } = contract.getUserSheets('mallendeo')
+      expect(results).to.have.lengthOf(1)
     })
 
-    const saved = contract.getSheet('vueApp')
-    expect(saved.isPublic).to.be.true
-    expect(saved.rootHash).to.deep.equal('ipfs_root_hash')
-    expect(saved.distHash).to.deep.equal('ipfs_dist_hash')
+    it('Should save ipfs hash', () => {
+      Blockchain.transaction.from = ACCOUNTS.bot
+
+      contract.saveSheet('vueApp', { // Random generated slug
+        isPublic: true,
+        rootHash: 'ipfs_root_hash',
+        distHash: 'ipfs_dist_hash'
+      })
+
+      const saved = contract.getSheet('vueApp')
+      expect(saved.isPublic).to.be.true
+      expect(saved.rootHash).to.deep.equal('ipfs_root_hash')
+      expect(saved.distHash).to.deep.equal('ipfs_dist_hash')
+    })
+
+    it('Should generate a slug', () => {
+      const newSheet = contract.saveSheet(null, { rootHash: 'ipfs_hash' })
+      const saved = contract.getSheet(newSheet.slug)
+
+      expect(newSheet).to.haveOwnProperty('slug')
+      expect(saved.rootHash).to.deep.equal('ipfs_hash')
+    })
+
+    it('Should throw when saving a invalid slug', () => {
+      ['invalid slug', '$invalid', 'inválid slúg'].forEach(invalid => {
+        expect(() => {
+          contract.saveSheet(invalid, {})
+        }).to.throw(/invalid 'slug'/i)
+      })
+    })
   })
 
-  it('Should generate a slug', () => {
-    const newSheet = contract.saveSheet(null, { rootHash: 'ipfs_hash' })
-    const saved = contract.getSheet(newSheet.slug)
+  describe('update', () => {
+    it('Should update an existing sheet', () => {
+      Blockchain.transaction.from = ACCOUNTS.mallendeo
 
-    expect(newSheet).to.haveOwnProperty('slug')
-    expect(saved.rootHash).to.deep.equal('ipfs_hash')
-  })
+      contract.saveSheet('myDapp', {
+        rootHash: 'some_updated_ipfs_hash'
+      })
 
-  it('Should throw when saving a invalid slug', () => {
-    ['invalid slug', '$invalid', 'inválid slúg'].forEach(invalid => {
+      const sheet = contract.getSheet('myDapp')
+      expect(sheet.title).to.equal('An awesome Dapp')
+      expect(sheet.rootHash).to.equal('some_updated_ipfs_hash')
+    })
+
+    it('Should throw when updating other user sheet', () => {
+      Blockchain.transaction.from = ACCOUNTS.testuser
       expect(() => {
-        contract.saveSheet(invalid, {})
-      }).to.throw(/invalid 'slug'/i)
+        contract.saveSheet('myDapp', {
+          dirHash: 'ipfs_hash'
+        })
+      }).to.throw(/can't edit/)
+    })
+  })
+
+  describe('list', () => {
+    it('Should return the main (public) sheet list', () => {
+      expect(contract.listSheets())
+        .to.be.an('array')
+        .and.have.lengthOf(1)
+
+      contract.saveSheet('random', { isPublic: true })
+      contract.saveSheet('random_1', { isPublic: false })
+      contract.saveSheet('random_2', { isPublic: true, isRemoved: true })
+
+      expect(contract.listSheets())
+        .to.be.an('array')
+        .and.have.lengthOf(2)
+    })
+
+    it('Should throw when trying to get an invalid list', () => {
+      expect(() => contract.listSheets('wrong-list'))
+        .to.throw(/wrong-list/)
     })
   })
 })

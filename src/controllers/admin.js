@@ -42,6 +42,28 @@ export default app => {
     _updateUser(username, { roles })
   }
 
+  const setPick = (slug, remove) => {
+    _checkPermissions('moderator')
+    const store = app.sheets.store
+    const id = store.sheetSlugMap.get(slug)
+    if (!id) throw NotFoundError()
+
+    const pickId = store.sheetPicksIndexMap.get(id)
+    const exists = pickId && store.sheetPicksMap.get(pickId)
+
+    if (exists) {
+      store.sheetPicksMap.del(pickId)
+      store.sheetPicksIndexMap.del(id)
+      store.sheetPicksSize -= 1
+    }
+
+    if (remove) return
+
+    store.sheetPicksMap.put(store.sheetPicksSize, id)
+    store.sheetPicksIndexMap.put(id, store.sheetPicksSize)
+    store.sheetPicksSize += 1
+  }
+
   const withdraw = balance => {
     const { from } = Blockchain.transaction
     if (store.admin !== from) {
@@ -60,6 +82,7 @@ export default app => {
     store,
     withdraw,
     setUserBan,
-    setUserRoles
+    setUserRoles,
+    setPick
   }
 }

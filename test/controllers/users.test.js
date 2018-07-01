@@ -15,9 +15,9 @@ describe('Users', () => {
   it('Should check user map size to equal 3', () => {
     // We added ACCOUNTS on init, so map size should be 4
     expect(db.get('prop_userMapSize').value())
-      .to.equal('4')
+      .to.equal('3')
     expect(contract.users.store.userMapSize)
-      .to.equal(4)
+      .to.equal(3)
   })
 
   it('Should create a new user', () => {
@@ -31,7 +31,7 @@ describe('Users', () => {
     })
 
     expect(newUser).to.be.an('object')
-    expect(contract.users.store.userMapSize).to.equal(5)
+    expect(contract.users.store.userMapSize).to.equal(4)
   })
 
   it('Should get user info', () => {

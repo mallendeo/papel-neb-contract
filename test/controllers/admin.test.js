@@ -21,11 +21,11 @@ describe('Admin', () => {
   it('Should set user roles', () => {
     const roles = ['admin', 'moderator']
     contract.admin.setUserRoles('mallendeo', roles)
-    contract.admin.setUserRoles('testuser', ['moderator'])
+    contract.admin.setUserRoles('testuser2018', ['moderator'])
 
     expect(contract.users.getUser('mallendeo').roles)
       .to.deep.equal(roles)
-    expect(contract.users.getUser('testuser').roles)
+    expect(contract.users.getUser('testuser2018').roles)
       .to.deep.equal(['moderator'])
   })
 
@@ -55,5 +55,32 @@ describe('Admin', () => {
 
     expect(contract.users.getUser('baduser'))
       .to.be.an('object')
+  })
+
+  describe('picks', () => {
+    it('Should pick a user sheet', () => {
+      contract.sheets.saveSheet('pick', { isPublic: true })
+      contract.sheets.saveSheet('anotherpick', { isPublic: true })
+
+      contract.admin.setPick('pick')
+      contract.admin.setPick('demoapp')
+      contract.admin.setPick('anotherpick')
+
+      expect(contract.sheets.listSheets('picks'))
+        .to.be.an('array').with.lengthOf(3)
+    })
+
+    it('Should unpick a user sheet', () => {
+      contract.admin.setPick('demoapp', true)
+      contract.admin.setPick('anotherpick', true)
+
+      expect(contract.sheets.listSheets('picks'))
+        .to.be.an('array').with.lengthOf(1)
+    })
+
+    it('Should throw trying to pick a null sheet', () => {
+      expect(() => contract.sheets.listSheets('_'))
+        .to.throw(/invalid/i)
+    })
   })
 })

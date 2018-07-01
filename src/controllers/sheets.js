@@ -22,6 +22,11 @@ export default app => {
     sheetSlugMap: { map: true },
     sheetMapSize: null,
     sheetUserMap: { map: true },
+
+    sheetPicksMap: { map: true },
+    sheetPicksIndexMap: { map: true },
+    sheetPicksSize: null,
+
     sheets: {
       map: true,
       parse: text => new Sheet(text),
@@ -31,6 +36,7 @@ export default app => {
 
   const init = () => {
     store.sheetMapSize = 0
+    store.sheetPicksSize = 0
   }
 
   const _update = (slug, id, opts, init) => {
@@ -105,10 +111,43 @@ export default app => {
     return sheet
   }
 
+  const listSheets = (type = 'public', page = 1) => {
+    const limit = 6
+    const sheetList = []
+
+    const typeMap = {
+      public: { name: 'sheets', size: store.sheetMapSize },
+      picks: { name: 'sheetPicksMap', size: store.sheetPicksSize }
+    }
+
+    const map = typeMap[type]
+
+    if (!map) throw NotFoundError(`Invalid list '${type}'`)
+
+    const start = map.size - (page - 1) * limit
+
+    for (let id = start; id > -1; --id) {
+      const sheet = type === 'public'
+        ? store[map.name].get(id)
+        : store.sheets.get(store[map.name].get(id))
+
+      if (!sheet) continue
+
+      if (sheet.isPublic && !sheet.isRemoved) {
+        sheetList.push(sheet)
+      }
+
+      if (sheetList.length === limit) break
+    }
+
+    return sheetList
+  }
+
   return {
     init,
     store,
     saveSheet,
-    getSheet
+    getSheet,
+    listSheets
   }
 }

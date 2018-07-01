@@ -19,12 +19,14 @@ export default class PapelApp {
     // ----------------------------
     this.saveSheet = this.sheets.saveSheet
     this.getSheet = this.sheets.getSheet
+    this.listSheets = this.sheets.listSheets
 
     // 🔐 Admin
     // ----------------------------
-    this.withdraw = this.admin.withdraw
     this.setUserBan = this.admin.setUserBan
     this.setUserRoles = this.admin.setUserRoles
+    this.setPick = this.admin.setPick
+    this.withdraw = this.admin.withdraw
   }
 
   init () {
