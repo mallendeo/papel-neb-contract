@@ -106,9 +106,10 @@ describe('Sheets', () => {
         .to.be.an('array')
         .and.have.lengthOf(2)
 
-      expect(sheets[0].user).to.deep.equal({
+      expect(sheets[0].author).to.deep.equal({
         avatar: 'testuser.jpg',
-        username: 'testuser'
+        username: 'testuser',
+        address: 'NB_ADDRESS_testuser'
       })
     })
 

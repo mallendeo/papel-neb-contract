@@ -137,7 +137,8 @@ export default app => {
 
       if (sheet.isPublic && !sheet.isRemoved && !user.isBanned) {
         const { avatar, username } = user
-        sheetList.push({ ...sheet, user: { avatar, username } })
+        const author = { avatar, username, address: sheet.author }
+        sheetList.push({ ...sheet, author })
       }
 
       if (sheetList.length === limit) break
