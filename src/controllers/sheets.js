@@ -112,7 +112,9 @@ export default app => {
   }
 
   const listSheets = (type = 'public', page = 1) => {
-    const limit = 6
+    if (page < 1) throw BadRequestError()
+
+    const perPage = 6
     const sheetList = []
 
     const typeMap = {
@@ -124,7 +126,7 @@ export default app => {
 
     if (!map) throw NotFoundError(`Invalid list '${type}'`)
 
-    const start = map.size - (page - 1) * limit
+    const start = map.size - (page - 1) * perPage
 
     for (let id = start; id > -1; --id) {
       const sheet = type === 'public'
@@ -141,10 +143,16 @@ export default app => {
         sheetList.push({ ...sheet, author })
       }
 
-      if (sheetList.length === limit) break
+      if (sheetList.length === perPage) break
     }
 
-    return sheetList
+    return {
+      sheets: sheetList,
+      totalSheets: map.size,
+      perPage,
+      prev: page > 1,
+      next: page < map.size / perPage
+    }
   }
 
   return {

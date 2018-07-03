@@ -66,7 +66,7 @@ describe('Admin', () => {
       contract.admin.setPick('demoapp')
       contract.admin.setPick('anotherpick')
 
-      expect(contract.sheets.listSheets('picks'))
+      expect(contract.sheets.listSheets('picks').sheets)
         .to.be.an('array').with.lengthOf(3)
     })
 
@@ -74,7 +74,7 @@ describe('Admin', () => {
       contract.admin.setPick('demoapp', true)
       contract.admin.setPick('anotherpick', true)
 
-      expect(contract.sheets.listSheets('picks'))
+      expect(contract.sheets.listSheets('picks').sheets)
         .to.be.an('array').with.lengthOf(1)
     })
 

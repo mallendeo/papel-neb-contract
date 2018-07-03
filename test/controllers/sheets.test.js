@@ -93,20 +93,23 @@ describe('Sheets', () => {
 
   describe('list', () => {
     it('Should return the main (public) sheet list', () => {
-      expect(contract.listSheets())
+      expect(contract.listSheets().sheets)
         .to.be.an('array')
         .and.have.lengthOf(1)
 
       contract.saveSheet('random', { isPublic: true })
       contract.saveSheet('random_1', { isPublic: false })
       contract.saveSheet('random_2', { isPublic: true, isRemoved: true })
-      const sheets = contract.listSheets()
 
-      expect(sheets)
+      const results = contract.listSheets()
+      expect(results.sheets)
         .to.be.an('array')
         .and.have.lengthOf(2)
+      expect(results.prev).to.equal(false)
+      expect(results.next).to.equal(false)
+      expect(results.perPage).to.equal(6)
 
-      expect(sheets[0].author).to.deep.equal({
+      expect(results.sheets[0].author).to.deep.equal({
         avatar: 'testuser.jpg',
         username: 'testuser',
         address: 'NB_ADDRESS_testuser'
