@@ -100,10 +100,16 @@ describe('Sheets', () => {
       contract.saveSheet('random', { isPublic: true })
       contract.saveSheet('random_1', { isPublic: false })
       contract.saveSheet('random_2', { isPublic: true, isRemoved: true })
+      const sheets = contract.listSheets()
 
-      expect(contract.listSheets())
+      expect(sheets)
         .to.be.an('array')
         .and.have.lengthOf(2)
+
+      expect(sheets[0].user).to.deep.equal({
+        avatar: 'testuser.jpg',
+        username: 'testuser'
+      })
     })
 
     it('Should throw when trying to get an invalid list', () => {
