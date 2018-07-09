@@ -57,12 +57,14 @@ export default app => {
 
   const _checkId = id => typeof id === 'undefined' || id === null
 
+  const _getId = slug => store.sheetSlugMap.get(slug)
+
   const saveSheet = (slug, opts) => {
     const { from } = Blockchain.transaction
 
     if (!slug) {
       slug = rndSlug(strToCharCode(from))
-      if (store.sheetSlugMap.get(slug)) {
+      if (_getId(slug)) {
         throw AppError(null, 'There was an error, please try again')
       }
     }
@@ -71,7 +73,7 @@ export default app => {
 
     if (!opts) throw MissingParameterError('opts')
 
-    let sheetId = store.sheetSlugMap.get(slug)
+    let sheetId = _getId(slug)
     if (_checkId(sheetId)) {
       app.users.checkActivity()
 
@@ -90,7 +92,7 @@ export default app => {
       throw UnauthorizedError(`You can't edit a sheet that isn't yours`)
     }
 
-    const slugSheetId = store.sheetSlugMap.get(slug)
+    const slugSheetId = _getId(slug)
     if (slugSheetId && slugSheetId !== sheetId) {
       throw ForbiddenError('This slug is already taken')
     }
@@ -101,7 +103,7 @@ export default app => {
   }
 
   const getSheet = slug => {
-    const sheetId = store.sheetSlugMap.get(slug)
+    const sheetId = _getId(slug)
     const err = NotFoundError(`Couldn't find '${slug}'`)
 
     if (_checkId(sheetId)) throw err
@@ -161,6 +163,7 @@ export default app => {
     store,
     saveSheet,
     getSheet,
-    listSheets
+    listSheets,
+    getIdBySlug: _getId
   }
 }

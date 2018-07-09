@@ -8,6 +8,7 @@ export default class User {
     this.showcase = info.showcase
 
     this.isBanned = info.isBanned
+    this.isRemoved = info.isRemoved
     this.roles = info.roles
 
     // Prevent comment/sheet flood
