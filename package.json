@@ -8,7 +8,7 @@
     "mocha": "mocha --require babel-core/register test/test.js",
     "test": "NODE_ENV=test npm run mocha --",
     "test:watch": "npm run test -- --watch",
-    "test:db": "rimraf tmp && npm run mocha -- --watch"
+    "test:db": "rimraf tmp && FILE_DB=true npm run test:watch"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -29,7 +29,8 @@
     "rollup-plugin-cleanup": "^3.0.0-beta.1",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-eslint": "^4.0.0",
-    "rollup-plugin-node-resolve": "^3.3.0"
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "sinon": "^6.1.3"
   },
   "dependencies": {
     "bignumber.js": "^7.2.1",

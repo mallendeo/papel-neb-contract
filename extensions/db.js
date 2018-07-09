@@ -4,12 +4,12 @@ import Memory from 'lowdb/adapters/Memory'
 import path from 'path'
 import fs from 'fs-extra'
 
-const ENV_TEST = process.env.NODE_ENV === 'test'
+const { FILE_DB } = process.env
 
-if (!ENV_TEST) fs.ensureDirSync('tmp')
+if (FILE_DB) fs.ensureDirSync('tmp')
 
 export default low(
-  ENV_TEST
-    ? new Memory()
-    : new FileSync(path.join(__dirname, '../tmp/db.json'))
+  FILE_DB
+    ? new FileSync(path.join(__dirname, '../tmp/db.json'))
+    : new Memory()
 )
