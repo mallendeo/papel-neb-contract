@@ -9,5 +9,8 @@ export default class User {
 
     this.isBanned = info.isBanned
     this.roles = info.roles
+
+    // Prevent comment/sheet flood
+    this.lastPost = info.lastPost ? Number(info.lastPost) : null
   }
 }

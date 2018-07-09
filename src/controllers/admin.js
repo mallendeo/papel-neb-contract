@@ -73,7 +73,7 @@ export default app => {
     const result = Blockchain.transfer(from, new BigNumber(balance * 10 ** 18))
 
     if (!result) {
-      throw AppError('Transfer failed.')
+      throw AppError(null, 'Transfer failed.')
     }
   }
 

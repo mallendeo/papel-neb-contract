@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 
 import '../../extensions'
 import db from '../../extensions/db'
@@ -95,8 +96,8 @@ describe('Users', () => {
     contract.saveUser({ username: 'bot' })
     contract.saveSheet('slug', {})
     contract.saveSheet('demoapp', { isPublic: true })
-    contract.saveSheet(null, { isPublic: true })
-    contract.saveSheet(null, { isPublic: true, isRemoved: true })
+    contract.saveSheet('animation', { isPublic: true })
+    contract.saveSheet('logo', { isPublic: true, isRemoved: true })
 
     contract.saveUser({ showcase: ['slug', 'demoapp'] })
 
@@ -129,5 +130,19 @@ describe('Users', () => {
 
     expect(total).to.equal(25)
     expect(results[0]).to.have.property('slug', 'sheet_n_7')
+  })
+
+  describe('Flood attack prevention', () => {
+    it(`Shouldn't let the user post more than once in the range of 15 seconds`, () => {
+      const clock = sinon.useFakeTimers(Date.now())
+
+      contract.saveSheet(`sheet_n_1000`, { isPublic: true })
+      clock.tick(5000)
+      expect(() => contract.users.checkActivity(true)).to.throw(/try again/)
+      clock.tick(10000)
+      expect(() => contract.users.checkActivity(true)).to.not.throw()
+
+      clock.restore()
+    })
   })
 })

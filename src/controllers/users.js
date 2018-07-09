@@ -6,7 +6,8 @@ import {
   ConflictError,
   BadRequestError,
   UnauthorizedError,
-  ForbiddenError
+  ForbiddenError,
+  AppError
 } from '../lib/errors'
 
 export default app => {
@@ -35,7 +36,7 @@ export default app => {
   }
 
   const _setUsername = (from, username, oldUsername) => {
-    if (!username || !slugSafe(username)) {
+    if (!username || !slugSafe(username, 1)) {
       throw BadRequestError('Invalid characters for "username"')
     }
 
@@ -79,6 +80,22 @@ export default app => {
         return info
       })
       .filter(sheet => (owner || sheet.isPublic) && !sheet.isRemoved)
+  }
+
+  const checkActivity = (force = false) => {
+    const { from } = Blockchain.transaction
+    const user = store.users.get(from)
+
+    if (!force && process && process.env.NODE_ENV === 'test') {
+      saveUser({ lastPost: Date.now() })
+      return
+    }
+
+    if (user.lastPost && Date.now() - user.lastPost < 15000) {
+      throw AppError(null, 'Please try again in a few seconds.')
+    }
+
+    saveUser({ lastPost: Date.now() })
   }
 
   const saveUser = user => {
@@ -156,6 +173,7 @@ export default app => {
     saveUser,
     getUser,
     getUserSheets,
-    getUserFullProfile
+    getUserFullProfile,
+    checkActivity
   }
 }

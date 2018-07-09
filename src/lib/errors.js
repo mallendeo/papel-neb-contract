@@ -1,6 +1,6 @@
 export const AppError = (name, message, status = 500) => {
   const err = Error(message)
-  err.name = name
+  err.name = name || 'AppError'
   err.status = status
 
   return err

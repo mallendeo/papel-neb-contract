@@ -62,9 +62,8 @@ export default app => {
 
     if (!slug) {
       slug = rndSlug(strToCharCode(from))
-
       if (store.sheetSlugMap.get(slug)) {
-        throw AppError('There was an error, please try again')
+        throw AppError(null, 'There was an error, please try again')
       }
     }
 
@@ -74,6 +73,8 @@ export default app => {
 
     let sheetId = store.sheetSlugMap.get(slug)
     if (_checkId(sheetId)) {
+      app.users.checkActivity()
+
       sheetId = store.sheetMapSize
       store.sheetSlugMap.put(slug, sheetId)
 
