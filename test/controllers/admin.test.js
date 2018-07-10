@@ -31,19 +31,23 @@ describe('Admin', () => {
 
   it('Should fail trying to set roles with a unauthorized user', () => {
     Blockchain.transaction.from = ACCOUNTS.bot
+    contract = new Contract()
     expect(() => contract.setUserRoles('mallendeo', []))
       .to.throw(/not allowed/)
 
     Blockchain.transaction.from = ACCOUNTS.testuser
+    contract = new Contract()
     expect(() => contract.setUserRoles('testuser', ['admin']))
       .to.throw(/not allowed/)
   })
 
   it('Should ban a user', () => {
     Blockchain.transaction.from = ACCOUNTS.badUser
+    contract = new Contract()
     contract.saveUser({ username: 'baduser' })
 
     Blockchain.transaction.from = ACCOUNTS.mallendeo
+    contract = new Contract()
     contract.setUserBan('baduser')
 
     expect(() => contract.getUser('baduser'))

@@ -53,12 +53,14 @@ describe('Comments', () => {
 
   it(`Shouldn't let the user edit other users comments`, () => {
     Blockchain.transaction.from = ACCOUNTS.badUser
+    contract = new Contract()
     expect(() => contract.updateComment(1, { comment: 'lmao' })).to.throw(/not allowed/)
     expect(() => contract.removeComment(1)).to.throw(/not allowed/)
   })
 
   it('Should create a comment with a different user and sheet', () => {
     Blockchain.transaction.from = ACCOUNTS.datboi
+    contract = new Contract()
     contract.postComment('animation', 'nice animation!')
     expect(contract.getComments({ username: 'datboi' })).to.have.lengthOf(1)
     expect(contract.getComments({ slug: 'animation' })).to.have.lengthOf(1)

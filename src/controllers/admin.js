@@ -7,19 +7,14 @@ export default app => {
   })
 
   const init = () => {
-    store.admin = Blockchain.transaction.from
+    store.admin = app.from
   }
 
   const _checkPermissions = (role = 'admin') => {
-    const { from } = Blockchain.transaction
-    if (store.admin === from) return
+    if (store.admin === app.from) return
+    if (!app.user.roles) throw UnauthorizedError()
 
-    const userStore = app.users.store
-    const user = userStore.users.get(from)
-
-    if (!user.roles) throw UnauthorizedError()
-
-    const found = user.roles.find(r => r === role)
+    const found = app.user.roles.find(r => r === role)
     if (!found) throw UnauthorizedError()
   }
 

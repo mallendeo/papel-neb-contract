@@ -42,7 +42,7 @@ export default app => {
   const _update = (slug, id, opts, init) => {
     if (opts.created) throw ForbiddenError()
 
-    const author = Blockchain.transaction.from
+    const author = app.from
     const now = Date.now()
 
     const initObj = init ? { created: now, updated: now } : {}

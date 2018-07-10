@@ -27,17 +27,17 @@ export default app => {
     store.commentsMapSize = 0
   }
 
-  const _update = (id, opts) => {
+  const _update = (id, opts, force = false) => {
     if (id && typeof id !== 'number') throw BadRequestError()
     if (opts.created) throw ForbiddenError()
 
     const commentId = typeof id !== 'undefined' ? id : store.commentsMapSize
-    const author = Blockchain.transaction.from
+    const author = app.from
     const now = Date.now()
 
     const obj = store.comments.get(commentId)
 
-    if (obj && (obj.author !== author || obj.isRemoved)) {
+    if (!force && obj && (obj.author !== author || obj.isRemoved)) {
       throw UnauthorizedError()
     }
 
@@ -88,7 +88,7 @@ export default app => {
     const commentId = _update(undefined, { comment })
     const curr = store.commentsSheetMap.get(sheetId) || []
 
-    const author = Blockchain.transaction.from
+    const author = app.from
     const userComments = store.commentsUserMap.get(author) || []
     store.commentsUserMap.put(author, [...userComments, commentId])
     store.commentsSheetMap.put(sheetId, [...curr, commentId])
@@ -96,9 +96,12 @@ export default app => {
     return commentId
   }
 
-  const updateComment = (id, opts) => _update(id, opts)
+  const updateComment = (id, opts) => {
+    const force = app.user.roles && app.user.roles.find(r => r === 'moderator')
+    _update(id, opts, force)
+  }
 
-  const removeComment = id => _update(id, { isRemoved: true })
+  const removeComment = id => updateComment(id, { isRemoved: true })
 
   const getComments = ({ slug, username } = {}) => {
     if (!slug && !username) throw MissingParameterError('opts ({ slug?, username? })')

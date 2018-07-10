@@ -46,7 +46,7 @@ export default app => {
 
     if (oldUsername) {
       const oldUserAddr = store.usernameMap.get(oldUsername)
-      if (oldUserAddr !== Blockchain.transaction.from) {
+      if (oldUserAddr !== app.from) {
         throw UnauthorizedError()
       }
 
@@ -55,8 +55,6 @@ export default app => {
 
     store.usernameMap.put(username, from)
   }
-
-  const _isOwner = user => user.userAddr === Blockchain.transaction.from
 
   const _userSheets = (username, type = 'showcase') => {
     const user = getUser(username)
@@ -73,7 +71,7 @@ export default app => {
         break
     }
 
-    const owner = _isOwner(user)
+    const owner = user.userAddr === app.from
     return (userSheets || [])
       .map(sheetId => {
         const { editor, compiled, author, ...info } = sheets.get(sheetId)
@@ -105,7 +103,7 @@ export default app => {
     if (showcase && showcase.length) {
       const notAllowed = showcase
         .map(app.sheets.getSheet)
-        .some(sheet => sheet.author !== Blockchain.transaction.from)
+        .some(sheet => sheet.author !== app.from)
 
       if (notAllowed) {
         throw ForbiddenError(`You can't add other user's sheets to your showcase`)

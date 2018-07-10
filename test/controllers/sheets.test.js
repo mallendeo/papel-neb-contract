@@ -38,6 +38,7 @@ describe('Sheets', () => {
 
     it('Should save ipfs hash', () => {
       Blockchain.transaction.from = ACCOUNTS.bot
+      contract = new Contract()
 
       contract.saveSheet('vueApp', { // Random generated slug
         isPublic: true,
@@ -71,6 +72,7 @@ describe('Sheets', () => {
   describe('update', () => {
     it('Should update an existing sheet', () => {
       Blockchain.transaction.from = ACCOUNTS.mallendeo
+      contract = new Contract()
 
       contract.saveSheet('myDapp', {
         rootHash: 'some_updated_ipfs_hash'
@@ -83,6 +85,7 @@ describe('Sheets', () => {
 
     it('Should throw when updating other user sheet', () => {
       Blockchain.transaction.from = ACCOUNTS.testuser
+      contract = new Contract()
       expect(() => {
         contract.saveSheet('myDapp', {
           dirHash: 'ipfs_hash'

@@ -23,6 +23,7 @@ describe('Users', () => {
 
   it('Should create a new user', () => {
     Blockchain.transaction.from = ACCOUNTS.datboi
+    contract = new Contract()
 
     expect(() => contract.getUser('datboi')).to.throw()
 
@@ -42,6 +43,7 @@ describe('Users', () => {
 
   it('Should throw a existing username error', () => {
     Blockchain.transaction.from = ACCOUNTS.testuser
+    contract = new Contract()
 
     expect(() => {
       contract.saveUser({
@@ -93,6 +95,8 @@ describe('Users', () => {
   it('Should get user\'s full profile including sheets', () => {
     // Create new user
     Blockchain.transaction.from = ACCOUNTS.bot
+    contract = new Contract()
+
     contract.saveUser({ username: 'bot' })
     contract.saveSheet('slug', {})
     contract.saveSheet('demoapp', { isPublic: true })

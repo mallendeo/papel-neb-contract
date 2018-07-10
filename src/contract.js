@@ -10,6 +10,10 @@ export default class PapelApp {
     this.users = UsersController(this)
     this.comments = CommentsController(this)
 
+    // Set instance props
+    this.from = Blockchain.transaction.from
+    this.user = this.users.store.users.get(this.from)
+
     // 👥 Users
     // ----------------------------
     this.saveUser = this.users.saveUser
