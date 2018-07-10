@@ -79,6 +79,7 @@ export default app => {
   const postComment = (slug, comment) => {
     if (!slug) throw MissingParameterError('slug')
     if (!comment) throw MissingParameterError('comment')
+    if (!app.user) throw ForbiddenError('You need to choose a username first')
 
     const sheetId = app.sheets.getIdBySlug(slug)
     if (!sheetId) {
@@ -97,7 +98,9 @@ export default app => {
   }
 
   const updateComment = (id, opts) => {
-    const force = app.user.roles && app.user.roles.find(r => r === 'moderator')
+    const force = app.user && app.user.roles &&
+      app.user.roles.find(r => r === 'moderator')
+
     _update(id, opts, force)
   }
 

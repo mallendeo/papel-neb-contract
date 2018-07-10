@@ -87,4 +87,12 @@ describe('Admin', () => {
         .to.throw(/invalid/i)
     })
   })
+
+  describe('comments', () => {
+    it('Should remove a comment', () => {
+      contract.removeComment(1)
+      expect(contract.getComments({ slug: 'vueApp' }))
+        .to.have.lengthOf(0)
+    })
+  })
 })
