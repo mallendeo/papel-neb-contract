@@ -95,4 +95,11 @@ describe('Admin', () => {
         .to.have.lengthOf(0)
     })
   })
+
+  describe('settings', () => {
+    it('Should set the soft ban timeout', () => {
+      contract.setSoftBanTimeout(10000)
+      expect(contract.softBanTimeout).to.equal(10000)
+    })
+  })
 })

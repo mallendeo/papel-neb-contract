@@ -40,10 +40,11 @@ export default class PapelApp {
     this.setUserBan = this.admin.setUserBan
     this.setUserRoles = this.admin.setUserRoles
     this.setPick = this.admin.setPick
+    this.setSoftBanTimeout = this.admin.setSoftBanTimeout
     this.withdraw = this.admin.withdraw
   }
 
-  init ({ sheets, comments }) {
+  init ({ sheets, comments } = {}) {
     this.admin.init()
     this.sheets.init()
     this.users.init()

@@ -137,15 +137,21 @@ describe('Users', () => {
   })
 
   describe('Flood attack prevention', () => {
+    const clock = sinon.useFakeTimers(Date.now())
+
     it(`Shouldn't let the user post more than once in the range of 15 seconds`, () => {
-      const clock = sinon.useFakeTimers(Date.now())
-
       contract.saveSheet(`sheet_n_1000`, { isPublic: true })
-      clock.tick(5000)
-      expect(() => contract.users.checkActivity(true)).to.throw(/try again/)
-      clock.tick(10000)
-      expect(() => contract.users.checkActivity(true)).to.not.throw()
 
+      clock.tick(5000)
+      expect(() => contract.users.checkActivity(true))
+        .to.throw(/try again/)
+
+      clock.tick(10000)
+      expect(() => contract.users.checkActivity(true))
+        .to.not.throw()
+    })
+
+    after(() => {
       clock.restore()
     })
   })

@@ -82,13 +82,17 @@ export default app => {
 
   const checkActivity = (force = false) => {
     const now = Date.now()
+    const { softBanTimeout } = app.admin.store
 
     if (!force && process.env.NODE_ENV === 'test') {
       saveUser({ lastPost: now }, true)
       return
     }
 
-    if (app.user && app.user.lastPost && now - app.user.lastPost < 15000) {
+    if (
+      app.user && app.user.lastPost &&
+      now - app.user.lastPost < softBanTimeout
+    ) {
       throw AppError(null, 'Please try again in a few seconds.')
     }
 

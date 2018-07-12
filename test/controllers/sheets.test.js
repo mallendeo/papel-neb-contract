@@ -115,6 +115,7 @@ describe('Sheets', () => {
       expect(results.sheets[0].author).to.deep.equal({
         avatar: 'testuser.jpg',
         username: 'testuser',
+        name: undefined,
         address: 'NB_ADDRESS_testuser'
       })
     })

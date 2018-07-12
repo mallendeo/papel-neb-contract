@@ -1,13 +1,20 @@
 import { initStorage } from '../lib/helpers'
-import { AppError, UnauthorizedError, NotFoundError } from '../lib/errors'
+import {
+  AppError,
+  UnauthorizedError,
+  NotFoundError,
+  BadRequestError
+} from '../lib/errors'
 
 export default app => {
   const store = initStorage(app)({
-    admin: null
+    admin: null,
+    softBanTimeout: null
   })
 
   const init = () => {
     store.admin = app.from
+    store.softBanTimeout = 15000
   }
 
   const _checkPermissions = (role = 'admin') => {
@@ -59,6 +66,14 @@ export default app => {
     store.sheetPicksSize += 1
   }
 
+  const setSoftBanTimeout = (ms = 15000) => {
+    if (typeof ms !== 'number') {
+      throw BadRequestError(`param 'ms' must be a number`)
+    }
+
+    app.softBanTimeout = ms
+  }
+
   const withdraw = balance => {
     const { from } = Blockchain.transaction
     if (store.admin !== from) {
@@ -78,6 +93,7 @@ export default app => {
     withdraw,
     setUserBan,
     setUserRoles,
-    setPick
+    setPick,
+    setSoftBanTimeout
   }
 }
