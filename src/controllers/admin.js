@@ -1,4 +1,6 @@
 import { initStorage } from '../lib/helpers'
+import { checkRoles } from '../lib/middleware'
+
 import {
   AppError,
   UnauthorizedError,
@@ -17,13 +19,7 @@ export default app => {
     store.softBanTimeout = 15000
   }
 
-  const _checkPermissions = (role = 'admin') => {
-    if (store.admin === app.from) return
-    if (!app.user.roles) throw UnauthorizedError()
-
-    const found = app.user.roles.find(r => r === role)
-    if (!found) throw UnauthorizedError()
-  }
+  const _checkRoles = checkRoles(app)
 
   const _updateUser = (username, opts) => {
     const userStore = app.users.store
@@ -35,17 +31,17 @@ export default app => {
   }
 
   const setUserBan = (username, isBanned = true) => {
-    _checkPermissions('moderator')
+    _checkRoles('moderator')
     _updateUser(username, { isBanned })
   }
 
   const setUserRoles = (username, roles = []) => {
-    _checkPermissions('admin')
+    _checkRoles('admin')
     _updateUser(username, { roles })
   }
 
   const setPick = (slug, remove) => {
-    _checkPermissions('moderator')
+    _checkRoles('moderator')
     const store = app.sheets.store
     const id = store.sheetSlugMap.get(slug)
     if (!id) throw NotFoundError()
@@ -67,6 +63,8 @@ export default app => {
   }
 
   const setSoftBanTimeout = (ms = 15000) => {
+    _checkRoles('admin')
+
     if (typeof ms !== 'number') {
       throw BadRequestError(`param 'ms' must be a number`)
     }
