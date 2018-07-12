@@ -2,6 +2,8 @@ export default class User {
   constructor (text) {
     const info = JSON.parse(text)
     this.username = info.username
+    this.name = info.name
+    this.meta = info.meta || {}
     this.avatar = info.avatar
     this.bio = info.bio
     this.created = info.created

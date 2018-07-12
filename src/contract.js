@@ -16,7 +16,9 @@ export default class PapelApp {
 
     // 👥 Users
     // ----------------------------
-    this.saveUser = this.users.saveUser
+
+    // Prevent user from avoiding flood ban
+    this.saveUser = user => this.users.saveUser(user)
     this.getUser = this.users.getUser
     this.getUserSheets = this.users.getUserSheets
     this.getUserFullProfile = this.users.getUserFullProfile
@@ -41,10 +43,24 @@ export default class PapelApp {
     this.withdraw = this.admin.withdraw
   }
 
-  init () {
+  init ({ sheets, comments }) {
     this.admin.init()
     this.sheets.init()
     this.users.init()
     this.comments.init()
+
+    if (sheets) {
+      sheets.forEach(sheet => {
+        const { slug, ...data } = sheet
+        this.saveSheet(slug, data)
+      })
+    }
+
+    if (comments) {
+      comments.forEach(comment => {
+        const { slug, msg } = comment
+        this.postComment(slug, msg)
+      })
+    }
   }
 }

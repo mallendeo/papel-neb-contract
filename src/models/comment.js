@@ -5,6 +5,8 @@ export default class Comment {
     this.id = opts.id
     this.author = opts.author
     this.comment = opts.comment
+    this.commentHtml = opts.commentHtml
+
     this.isRemoved = opts.isRemoved
     this.likes = Number(opts.likes || 0)
 

@@ -131,6 +131,7 @@ export default app => {
 
     const start = map.size - (page - 1) * perPage
 
+    // TODO:
     for (let id = start; id > -1; --id) {
       const sheet = type === 'public'
         ? store[map.name].get(id)
@@ -141,8 +142,8 @@ export default app => {
       const user = app.users.store.users.get(sheet.author)
 
       if (sheet.isPublic && !sheet.isRemoved && !user.isBanned) {
-        const { avatar, username } = user
-        const author = { avatar, username, address: sheet.author }
+        const { avatar, username, name } = user
+        const author = { avatar, username, name, address: sheet.author }
         sheetList.push({ ...sheet, author })
       }
 

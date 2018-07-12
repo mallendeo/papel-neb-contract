@@ -20,6 +20,8 @@ export default class Sheet {
     this.rootHash = opts.rootHash
     this.distHash = opts.distHash
 
+    this.extra = opts.extra || {}
+
     this.created = opts.created
     this.updated = opts.updated
   }

@@ -3,6 +3,7 @@ import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import cleanup from 'rollup-plugin-cleanup'
+import replace from 'rollup-plugin-replace'
 
 export default {
   input: 'src/contract.js',
@@ -12,6 +13,9 @@ export default {
   },
   plugins: [
     eslint(),
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
     babel({
       exclude: 'node_modules/**',
       babelrc: false,

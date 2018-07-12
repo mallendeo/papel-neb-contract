@@ -81,24 +81,25 @@ export default app => {
   }
 
   const checkActivity = (force = false) => {
-    const { from } = Blockchain.transaction
-    const user = store.users.get(from)
+    const now = Date.now()
 
-    if (!force && process && process.env.NODE_ENV === 'test') {
-      saveUser({ lastPost: Date.now() })
+    if (!force && process.env.NODE_ENV === 'test') {
+      saveUser({ lastPost: now }, true)
       return
     }
 
-    if (user.lastPost && Date.now() - user.lastPost < 15000) {
+    if (app.user && app.user.lastPost && now - app.user.lastPost < 15000) {
       throw AppError(null, 'Please try again in a few seconds.')
     }
 
-    saveUser({ lastPost: Date.now() })
+    saveUser({ lastPost: now }, true)
   }
 
-  const saveUser = user => {
+  const saveUser = (user, force) => {
     const newUser = { ...user }
-    const { username, showcase } = newUser
+    const { username, showcase, lastPost } = newUser
+
+    if (!force && lastPost) throw ForbiddenError()
 
     if (showcase && showcase.length) {
       const notAllowed = showcase
