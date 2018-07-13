@@ -41,6 +41,11 @@ describe('Users', () => {
     expect(userInfo).to.be.an('object')
   })
 
+  it('Should get user info by address', () => {
+    const userInfo = contract.getUserByAddress('NB_ADDRESS_datboi')
+    expect(userInfo).to.be.an('object')
+  })
+
   it('Should throw a existing username error', () => {
     Blockchain.transaction.from = ACCOUNTS.testuser
     contract = new Contract()

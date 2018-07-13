@@ -22,6 +22,7 @@ export default class PapelApp {
     this.getUser = this.users.getUser
     this.getUserSheets = this.users.getUserSheets
     this.getUserFullProfile = this.users.getUserFullProfile
+    this.getUserByAddress = this.users.getUserByAddress
 
     // 📝 Sheets
     // ----------------------------

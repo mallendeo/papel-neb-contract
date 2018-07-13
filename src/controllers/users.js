@@ -144,13 +144,18 @@ export default app => {
     return store.users.put(from, { ...(found || {}), ...newUser })
   }
 
+  const getUserByAddress = addr => {
+    const user = store.users.get(addr)
+    if (!user || user.isBanned) {
+      throw NotFoundError(`Couldn't find user`)
+    }
+
+    return user
+  }
+
   const getUser = username => {
     const userAddr = store.usernameMap.get(username)
-
-    const user = store.users.get(userAddr)
-    if (!user || user.isBanned) {
-      throw NotFoundError(`Couldn't find user ${username}`)
-    }
+    const user = getUserByAddress(userAddr)
 
     return { ...user, userAddr }
   }
@@ -174,6 +179,7 @@ export default app => {
     init,
     store,
     saveUser,
+    getUserByAddress,
     getUser,
     getUserSheets,
     getUserFullProfile,
