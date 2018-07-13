@@ -16,7 +16,7 @@ neb.setRequest(new HttpRequest(
   `https://${mainnet ? 'mainnet' : 'testnet'}.nebulas.io`
 ))
 
-const send = from => async (to, value, contract) => {
+const send = from => async (to, value, contract, nonce = 0) => {
   if (!to) throw Error('Missing parameter `to`')
   const state = await neb.api.getAccountState(from.getAddressString())
 
@@ -25,7 +25,7 @@ const send = from => async (to, value, contract) => {
     from,
     to,
     Unit.nasToBasic(value),
-    parseInt(state.nonce) + 1,
+    parseInt(state.nonce) + 1 + nonce,
     1000000,
     200000,
     contract
@@ -40,6 +40,8 @@ const accounts = users.map(user => {
   const account = Account.NewAccount()
   account.setPrivateKey(user.pkey)
   account.send = send(account)
+  account.addr = account.getAddressString()
+
   return account
 })
 

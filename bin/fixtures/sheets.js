@@ -40,12 +40,6 @@ module.exports = [
     distHash: 'QmTSuvU3y1nKQitxG33acp5FtPtxmvAagbQcD5xoTHbyvG'
   },
   {
-    slug: 'bYERav',
-    isPublic: true,
-    rootHash: 'QmX4t1pEBaXUe7fRVRRGneVHvTRyj1aMqW3z8MVkiZEtWx',
-    distHash: 'QmTSuvU3y1nKQitxG33acp5FtPtxmvAagbQcD5xoTHbyvG'
-  },
-  {
     slug: 'slug',
     isPublic: false,
     rootHash: 'QmNSUHHNtbCTASvkDv7eFd5fQh8UjMva18Pv9nBdkU3bHR',
