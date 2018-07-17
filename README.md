@@ -22,3 +22,12 @@ $ yarn test
 $ yarn test:watch
 $ yarn test:db # save db on ./tmp
 ```
+
+## Deploy
+```bash
+$ P_KEY="unencrypted_private_key" yarn deploy
+$ P_KEY="unencrypted_private_key" yarn deploy true # populate db
+```
+
+# License
+GNU General Public License v3.0
