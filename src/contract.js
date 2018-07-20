@@ -2,6 +2,7 @@ import AdminController from './controllers/admin'
 import SheetsController from './controllers/sheets'
 import UsersController from './controllers/users'
 import CommentsController from './controllers/comments'
+import FilesController from './controllers/files'
 
 export default class PapelApp {
   constructor () {
@@ -9,6 +10,7 @@ export default class PapelApp {
     this.sheets = SheetsController(this)
     this.users = UsersController(this)
     this.comments = CommentsController(this)
+    this.files = FilesController(this)
 
     // Set instance props
     this.from = Blockchain.transaction.from
@@ -36,6 +38,12 @@ export default class PapelApp {
     this.removeComment = this.comments.removeComment
     this.updateComment = this.comments.updateComment
 
+    // 🗄 Files
+    // ----------------------------
+    this.saveFiles = this.files.saveFiles
+    this.removeFile = this.files.removeFile
+    this.getFiles = this.files.getFiles
+
     // 🔐 Admin
     // ----------------------------
     this.setUserBan = this.admin.setUserBan
@@ -50,6 +58,7 @@ export default class PapelApp {
     this.sheets.init()
     this.users.init()
     this.comments.init()
+    this.files.init()
 
     if (sheets) {
       sheets.forEach(sheet => {

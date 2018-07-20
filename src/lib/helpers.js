@@ -48,8 +48,8 @@ export const initStorage = app => props =>
 
 export const slugSafe = (str, minLen = 4) => {
   const notAllowed = ['public', 'private', 'new', 'popular', 'picks'].find(s => s === str)
-  if (str.length < minLen) return false
-  return notAllowed ? false : /^[a-zA-Z0-9_-]*$/.test(str)
+  if (str.length < minLen || notAllowed) return false
+  return /^[a-zA-Z0-9_-]*$/.test(str)
 }
 
 export const strToCharCode = str => str
