@@ -16,16 +16,17 @@ export default app => {
     if (!files || !files.length) throw BadRequestError()
 
     const indexes = files.map(file => {
-      ['name', 'type', 'hash'].forEach(param => {
+      ['name', 'type', 'hash', 'size'].forEach(param => {
         if (!param) throw MissingParameterError(param)
       })
 
-      const { name, type, hash } = file
+      const { name, type, hash, size } = file
       const index = store.filesMapSize
       store.files.put(index, {
         name,
         type,
         hash,
+        size,
         created: Date.now()
       })
 
@@ -50,8 +51,8 @@ export default app => {
   }
 
   const getFiles = () =>
-    store.usersFilesMap.get(app.from)
-      .map(index => store.files.get(index))
+    (store.usersFilesMap.get(app.from) || [])
+      .map(index => ({ ...store.files.get(index), id: index }))
       .filter(file => !file.isRemoved)
 
   return {

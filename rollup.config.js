@@ -14,7 +14,7 @@ export default {
   plugins: [
     eslint(),
     replace({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': process.env.NODE_ENV || JSON.stringify('production')
     }),
     babel({
       exclude: 'node_modules/**',

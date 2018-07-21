@@ -9,12 +9,13 @@ const {
 
 const users = require('./fixtures/users')
 
-const mainnet = typeof process.env.MAIN !== 'undefined' && process.env.MAIN
-
+const mainnet = typeof process.env.MAIN !== 'undefined' && JSON.stringify(process.env.MAIN) === '"true"'
+console.log({mainnet})
 const neb = new Neb()
-neb.setRequest(new HttpRequest(
-  `https://${mainnet ? 'mainnet' : 'testnet'}.nebulas.io`
-))
+const nebUrl = `https://${mainnet ? 'mainnet' : 'testnet'}.nebulas.io`
+console.log('using net', nebUrl)
+
+neb.setRequest(new HttpRequest(nebUrl))
 
 const send = from => async (to, value, contract, nonce = 0) => {
   if (!to) throw Error('Missing parameter `to`')
