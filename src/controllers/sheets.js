@@ -111,7 +111,7 @@ export default app => {
     const sheet = store.sheets.get(sheetId)
     if (sheet.isRemoved) throw err
 
-    return sheet
+    return { ...sheet, id: sheetId }
   }
 
   const listSheets = (type = 'public', page = 1) => {
@@ -144,7 +144,7 @@ export default app => {
       if (sheet.isPublic && !sheet.isRemoved && !user.isBanned) {
         const { avatar, username, name } = user
         const author = { avatar, username, name, address: sheet.author }
-        sheetList.push({ ...sheet, author })
+        sheetList.push({ ...sheet, author, id })
       }
 
       if (sheetList.length === perPage) break

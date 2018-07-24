@@ -81,6 +81,7 @@ describe('Sheets', () => {
       const sheet = contract.getSheet('myDapp')
       expect(sheet.title).to.equal('An awesome Dapp')
       expect(sheet.rootHash).to.equal('some_updated_ipfs_hash')
+      expect(sheet.id).to.equal(0)
     })
 
     it('Should throw when updating other user sheet', () => {
@@ -100,7 +101,7 @@ describe('Sheets', () => {
         .to.be.an('array')
         .and.have.lengthOf(1)
 
-      contract.saveSheet('random', { isPublic: true })
+      contract.saveSheet('random', { isPublic: true, forkedFrom: 0 })
       contract.saveSheet('random_1', { isPublic: false })
       contract.saveSheet('random_2', { isPublic: true, isRemoved: true })
 
@@ -111,6 +112,16 @@ describe('Sheets', () => {
       expect(results.prev).to.equal(false)
       expect(results.next).to.equal(false)
       expect(results.perPage).to.equal(6)
+
+      results.sheets.forEach(sheet => {
+        if (sheet.slug === 'random') {
+          expect(sheet.forkedFrom).to.equal(0)
+        }
+
+        expect(sheet).to.haveOwnProperty('title')
+        expect(sheet).to.haveOwnProperty('author')
+        expect(sheet).to.haveOwnProperty('id')
+      })
 
       expect(results.sheets[0].author).to.deep.equal({
         avatar: 'testuser.jpg',

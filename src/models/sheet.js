@@ -4,10 +4,11 @@ export default class Sheet {
 
     this.author = opts.author
     this.slug = opts.slug
-    this.isPublic = opts.isPublic
     this.title = opts.title
     this.description = opts.description
-    this.isRemoved = opts.isRemoved
+
+    this.isPublic = opts.isPublic
+    this.forkedFrom = opts.forkedFrom
 
     /**
      * Code and config
@@ -22,6 +23,7 @@ export default class Sheet {
 
     this.extra = opts.extra || {}
 
+    this.isRemoved = opts.isRemoved
     this.created = opts.created
     this.updated = opts.updated
   }
